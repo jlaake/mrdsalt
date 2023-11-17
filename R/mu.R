@@ -10,7 +10,7 @@
 #' @param dformula model for dependence due residual (unmodelled) heterogeneity
 #' @return vector of values at different x (distance) values for integrate
 #' @author Jeff Laake
-#' @seealso \link{detprobs}
+#' @seealso \link{p.ll}
 #' @export
 # compute integral over pooled detection function
 mu=function(x,par,dd,pformula,dformula)
@@ -22,7 +22,7 @@ mu=function(x,par,dd,pformula,dformula)
   # create object numbers
   dd$object=rep(1:length(x),each=2)
   # compute K which is the sum of the 3 multinomial logit values
-  K=detprobs(par,dd,pformula=pformula,dformula=dformula)$K
+  K=p.ll(par,dd,pformula=pformula,dformula=dformula)$K
   # return vector of probabilities that at least one observer detected the object for each distance
   return(1-1/K)
 }

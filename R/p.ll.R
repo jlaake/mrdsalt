@@ -7,7 +7,7 @@
 #' @return list with prob: probability matrix with 3 columns for 10,01,11 at each of n rows of observations and K the denominator
 #' @author Jeff Laake
 #' @export
-detprobs=function(par,x,pformula,dformula)
+p.ll=function(par,x,pformula,dformula)
 {
   # compute design matrix for observer probability part of model
   mm=model.matrix(pformula,x)

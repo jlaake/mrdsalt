@@ -23,7 +23,7 @@ sim_data=function(N,W,par,cov=NULL,pformula=~-1+observer+observer:distance,dform
   # create pairs of records (one for each observer)
   dd=make.design.data(x)
   # generate the 4 multinomial cell probabilities for each of the N objects
-  prob=detprobs(par,dd,pformula=pformula,dformula=dformula)$prob
+  prob=p.ll(par,dd,pformula=pformula,dformula=dformula)$prob
   prob=cbind(1-rowSums(prob),prob)
   all_ch=c("00","10","01","11")
   # generate N multinomial random variables 1 to 4 and with that value lookup ch value

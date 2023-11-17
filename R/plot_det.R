@@ -7,7 +7,7 @@ plot_det=function(mod)
 {
   if(is.null(mod$mrmodel$pformula))stop("full model result with formulas not used in call")
   # show plots of detection function for observer 1,2 duplicates, pooled and conditional
-  prob=detprobs(par=mod$par,mod$data,pformula=mod$mrmodel$pformula,dformula=mod$mrmodel$dformula)$prob
+  prob=p.ll(par=mod$par,mod$data,pformula=mod$mrmodel$pformula,dformula=mod$mrmodel$dformula)$prob
   delta=prob[,3]/((prob[,1]+prob[,3])*(prob[,2]+prob[,3]))
 
   par(mfrow=c(2,2))
@@ -32,7 +32,7 @@ plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "
   model <- x
   which <- sort(which)
   xmat <- model$data
-  prob=detprobs(par=model$par,model$data,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula)$prob
+  prob=p.ll(par=model$par,model$data,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula)$prob
   p1 = prob[,3]/(prob[,2]+prob[,3]) # conditional probability 1|2
   p2 = prob[,3]/(prob[,1]+prob[,3]) # conditional probability 2|1
   delta=prob[,3]/((prob[,1]+prob[,3])*(prob[,2]+prob[,3]))
@@ -436,7 +436,7 @@ average.line.ll<-function (finebr, obs, model)
     x <- (finebr[i] + finebr[i + 1])/2
     xgrid <- c(xgrid, x)
     newdat$distance <- rep(x, dim(newdat)[1])
-    prob=detprobs(par=model$par,newdat,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula)$prob
+    prob=p.ll(par=model$par,newdat,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula)$prob
     p1 = prob[,3]/(prob[,2]+prob[,3]) # conditional probability 1|2
     p2 = prob[,3]/(prob[,1]+prob[,3]) # conditional probability 2|1
     delta=prob[,3]/((prob[,1]+prob[,3])*(prob[,2]+prob[,3]))

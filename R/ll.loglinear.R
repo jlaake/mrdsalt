@@ -16,7 +16,7 @@ ll.loglinear=function(par,cmat,dd,W,pformula,dformula,debug)
   # get number of observations
   n=nrow(dd)/2
   # compute multinomial probability values at current set of par values
-  prob=detprobs(par=par,x=dd,pformula=pformula,dformula=dformula)$prob
+  prob=p.ll(par=par,x=dd,pformula=pformula,dformula=dformula)$prob
   # if formula only uses distance and observer then compute a single effective strip with (integral of detection function mu)
   # and compute negative log-likelihood
   if(all(unique(c(all.vars(pformula),all.vars(dformula)))%in%c("distance","observer")))

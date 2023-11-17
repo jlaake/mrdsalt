@@ -64,7 +64,7 @@ plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "
   model <- x
   which <- sort(which)
   xmat <- model$data
-  prob=detprobs(par=model$par,model$data,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula)$prob
+  prob=p.ll(par=model$par,model$data,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula)$prob
   p1 = prob[,3]/(prob[,2]+prob[,3]) # conditional probability 1|2
   p2 = prob[,3]/(prob[,1]+prob[,3]) # conditional probability 2|1
   delta=prob[,3]/((prob[,1]+prob[,3])*(prob[,2]+prob[,3]))

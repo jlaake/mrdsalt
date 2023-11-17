@@ -25,7 +25,7 @@ Calls \link{detprobs} to compute 1-1/K for a range of x (distance) values for
 each observation to integrate average detection probability by at least one observer.
 }
 \seealso{
-\link{detprobs}
+\link{p.ll}
 }
 \author{
 Jeff Laake

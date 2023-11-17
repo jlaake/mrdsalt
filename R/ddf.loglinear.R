@@ -73,7 +73,7 @@ ddf.loglinear=function(mrmodel=list(pformula=~-1+observer+observer:distance,dfor
   cmat[,2]=as.numeric(x$ch=="01")
   cmat[,3]=as.numeric(x$ch=="11")
   # call detprobs just to to check if length par is ok; only really needed if user provided par vector
-  xx=detprobs(par,data,pformula=pformula,dformula=dformula)
+  xx=p.ll(par,data,pformula=pformula,dformula=dformula)
   # fit model using optimx
   mod=optimx(par=par,fn=ll.loglinear,cmat=cmat,dd=data,W=meta.data$width,method=control$method,
              pformula=pformula,dformula=dformula,debug=control$debug)

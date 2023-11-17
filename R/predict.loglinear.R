@@ -15,7 +15,7 @@ predict.loglinear=function(model)
   par=model$par
   W=model$meta.data$width
   # compute multinomial probability values at current set of par values
-  prob=detprobs(par=par,x=data,pformula=pformula,dformula=dformula)$prob
+  prob=p.ll(par=par,x=data,pformula=pformula,dformula=dformula)$prob
   # if formula only uses distance and observer then compute a single effective strip with (integral of detection function mu)
   if(all(unique(c(all.vars(pformula),all.vars(dformula)))%in%c("distance","observer")))
   {
