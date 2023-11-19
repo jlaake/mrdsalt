@@ -28,7 +28,7 @@ negative log-likelihood value at those values of par
 Compute negative log likelihood log-linear model with possible dependence in detections for mark-recapture distance data.
 }
 \seealso{
-\link{mu}
+\link{mu.loglinear}, \link{p.loglinear}
 }
 \author{
 Jeff Laake

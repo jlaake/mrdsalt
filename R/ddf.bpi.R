@@ -4,6 +4,7 @@
 #' @param mrmodel list containing pformula (for detection) and dformula (for dependence)
 #' @param meta.data list containing width and other fields not currently used
 #' @param control list containing method (for optimization), debug (TRUE or FALSE), initial (optional starting values), indepm(TRUE if full independence), PI point independence if TRUE, use.offset and posdep.
+#' @param call call syntax to ddf
 #' @return list containing: fitted parameter values (par), AIC, optimx result with avep and NHat added, pformula and dformula.
 #' @seealso ll.bpi
 #' @author Jeff Laake
@@ -14,16 +15,19 @@
 #' W=10
 #' N=1000
 #' set.seed(1083821)
-#' x=sim_data(N,W,par=par)
+#' x=sim.loglinear(N,W,par=par)
 #' #create data structure with 2 records for each observation
 #' dd=make.design.data(x)
 #' #fit model
-#' results=ddf(mrmodel=list(pformula=~observer*distance,dformula=~-1+distance),data=dd,method="bpi",meta.data=list(width=W),control=list(method="nlminb",debug=FALSE))
+#' results=ddf(mrmodel=list(pformula=~observer*distance,dformula=~-1+distance),
+#' data=dd,method="bpi",meta.data=list(width=W),
+#' control=list(method="nlminb",debug=FALSE))
+#' results$criterion
 #' #N hat
 #' Nhat=nrow(x)/results$mod$avep
 #' Nhat
 #' # %diff
-#' 100*(N-Nhat)/N
+#' 100*(Nhat-N)/N
 #' # unconditonal detection fcts
 #' par(mfrow=c(3,2))
 #' plot(results,1:6,showpoints=FALSE)
@@ -31,8 +35,30 @@
 #' par(mfrow=c(1,2))
 #' plot(results,7:8,showlines=FALSE)
 #'
-
-ddf.bpi=function(mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~-1+distance),data,meta.data=meta.data,control=control,call="")
+#' set.seed(1083821)
+#' x=sim.bpi(x=data.frame(observer=rep(c(1,2),times=N),object=rep(1:N,each=2),
+#'  distance=rep(runif(N/2,0,W),each=2)),
+#'  par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178),
+#'  p.formula=~observer*distance,delta.formula=~-1+distance,PI=TRUE)
+#' #fit model
+#' results=ddf(mrmodel=list(pformula=~observer*distance,dformula=~-1+distance),
+#' data=x,method="bpi",meta.data=list(width=W),
+#' control=list(method="nlminb",debug=FALSE))
+#' results$criterion
+#' #N hat
+#' Nhat=nrow(x)/2/results$mod$avep
+#' Nhat
+#' # %diff
+#' 100*(Nhat-N)/N
+#' # unconditonal detection fcts
+#' par(mfrow=c(3,2))
+#' plot(results,1:6,showpoints=FALSE)
+#' # conditional detection functions
+#' par(mfrow=c(1,2))
+#' plot(results,7:8,showlines=FALSE)
+#
+ddf.bpi=function(mrmodel=list(pformula=~-1+observer+observer:distance,
+      dformula=~-1+distance),data,meta.data=meta.data,control=control,call="")
 {
   save.options <- options()
   options(contrasts = c("contr.treatment", "contr.poly"))
@@ -79,25 +105,12 @@ ddf.bpi=function(mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~
   par=as.vector(unlist(mod[paste("p",1:npar,sep="")]))
   names(par)=xx$parnames
   # compute average p and Nhat
-  n=nrow(x)
-  #without individual covariates
-  if(all(unique(c(all.vars(pformula),all.vars(dformula)))%in%c("distance","observer")))
-  {
-    fitted=integrate(mu,lower=0,upper=meta.data$width,dd=data[1:2,],par=par,pformula=pformula,dformula=dformula)$value/meta.data$width
-    mod$avep=fitted
-    fitted=rep(fitted,n)
-    mod$Nhat=n/mod$avep
-  }
-  else
-  {
-    # with individual covariates
-    mod$Nhat=0
-    fitted=NULL
-    for(i in 1:n)
-      fitted=c(fitted,integrate(mu,lower=0,upper=meta.data$width,par=par,dd=data[((i-1)*2+1):(i*2),],pformula=pformula,dformula=dformula)$value/meta.data$width)
-    mod$Nhat=sum(1/fitted)
-    mod$avep=n/mod$Nhat
-  }
+  fitted=p.bpi(par,x=data,p.formula=pformula,delta.formula=dformula,
+               width=meta.data$width,indep=control$indep,PI=control$PI,use.offset=control$use.offset,
+               posdep=control$posdep)$mudot/meta.data$width
+
+  mod$Nhat=sum(1/fitted)
+  mod$avep=length(fitted)/mod$Nhat
   # return result with parameter values, AIC, optimx object, formula and data that was used to fit model
   result$hessian=attributes(mod)$details[[3]]
   colnames(result$hessian)=names(par)

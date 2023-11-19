@@ -6,11 +6,10 @@
 #' @param cov a function that creates a single covariate value named cov to be used in the data simulation
 #' @param pformula formula for detection but excluding the dependence portion
 #' @param dformula model for dependence due residual (unmodelled) heterogeneity
-#' @return dataframe containing a pair of records (one for each observer) with the fields to be used for analysis including the capture history.
-#' Objects not seen ch="00" are excluded from the dataframe.
+#' @return dataframe containing a pair of records (one for each observer) with the fields to be used for analysis including the capture history. Objects not seen ch="00" are excluded from the dataframe.
 #' @author Jeff Laake
 #' @export
-sim_data=function(N,W,par,cov=NULL,pformula=~-1+observer+observer:distance,dformula=~-1+distance)
+sim.loglinear=function(N,W,par,cov=NULL,pformula=~-1+observer+observer:distance,dformula=~-1+distance)
 {
   # generate N uniform random variates between 0 and W
   distance=runif(N,0,W)
@@ -23,7 +22,7 @@ sim_data=function(N,W,par,cov=NULL,pformula=~-1+observer+observer:distance,dform
   # create pairs of records (one for each observer)
   dd=make.design.data(x)
   # generate the 4 multinomial cell probabilities for each of the N objects
-  prob=p.ll(par,dd,pformula=pformula,dformula=dformula)$prob
+  prob=p.loglinear(par,dd,pformula=pformula,dformula=dformula)$prob
   prob=cbind(1-rowSums(prob),prob)
   all_ch=c("00","10","01","11")
   # generate N multinomial random variables 1 to 4 and with that value lookup ch value

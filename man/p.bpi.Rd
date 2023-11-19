@@ -4,7 +4,17 @@
 \alias{p.bpi}
 \title{Probability calculations for Buckland et al 2010 model}
 \usage{
-p.bpi(par,x,p.formula,delta.formula,width,indep=FALSE,PI=FALSE,use.offset=FALSE,posdep=FALSE)
+p.bpi(
+  par,
+  x,
+  p.formula,
+  delta.formula,
+  width,
+  indep = FALSE,
+  PI = FALSE,
+  use.offset = FALSE,
+  posdep = FALSE
+)
 }
 \arguments{
 \item{par}{model parameter values}

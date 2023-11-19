@@ -4,10 +4,12 @@
 \alias{predict.loglinear}
 \title{Compute average detection probabilities for log-linear model with possible dependence in detections for mark-recapture distance data.}
 \usage{
-\method{predict}{loglinear}(model)
+\method{predict}{loglinear}(object, ...)
 }
 \arguments{
-\item{model}{fitted loglinear model}
+\item{object}{fitted loglinear model}
+
+\item{...}{additional arguments affecting the predictions produced}
 }
 \value{
 vector of predicted average detection probabilities (integrated over x) for each observation.
@@ -16,7 +18,7 @@ vector of predicted average detection probabilities (integrated over x) for each
 Compute average detection probabilities for log-linear model with possible dependence in detections for mark-recapture distance data.
 }
 \seealso{
-\link{mu}
+\link{mu.loglinear}, \link{p.loglinear}
 }
 \author{
 Jeff Laake

@@ -64,7 +64,7 @@ plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "
   model <- x
   which <- sort(which)
   xmat <- model$data
-  prob=p.ll(par=model$par,model$data,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula)$prob
+  prob=p.loglinear(par=model$par,model$data,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula)$prob
   p1 = prob[,3]/(prob[,2]+prob[,3]) # conditional probability 1|2
   p2 = prob[,3]/(prob[,1]+prob[,3]) # conditional probability 2|1
   delta=prob[,3]/((prob[,1]+prob[,3])*(prob[,2]+prob[,3]))
@@ -93,7 +93,7 @@ plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "
   #  oask <- plot_layout(which, pages)
   #  on.exit(devAskNewPage(oask))
   for (wh in which[which < 7]) {
-    mrdstl:::plot_uncond(model, obs=wh, xmat=xmat, gxvalues = gxlist[[wh]],
+    plot_uncond(model, obs=wh, xmat=xmat, gxvalues = gxlist[[wh]],
                 nc, finebr = (width/divisions) * (0:divisions), breaks,
                 showpoints, showlines, maintitle, ylim, angle = angle,
                 density = density, col = col, jitter = jitter, xlab = xlab,
@@ -103,7 +103,7 @@ plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "
   #data$offsetvalue <- 0
   if (is.element(7, which)) {
     gxvalues <- p1[xmat$detected[xmat$observer == 2] == 1]
-    mrdstl:::plot_cond(1, xmat, gxvalues, model, nc, breaks, finebr = (width/divisions) *
+    plot_cond(1, xmat, gxvalues, model, nc, breaks, finebr = (width/divisions) *
                 (0:divisions), showpoints, showlines, maintitle,
               ylim, angle = angle, density = density, col = col,
               jitter = jitter, xlab = xlab, ylab = ylab, subtitle = subtitle,
@@ -111,7 +111,7 @@ plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "
   }
   if (is.element(8, which)) {
     gxvalues <- p2[xmat$detected[xmat$observer == 1] == 1]
-    mrdstl:::plot_cond(2, xmat, gxvalues, model, nc, breaks, finebr = (width/divisions) *
+    plot_cond(2, xmat, gxvalues, model, nc, breaks, finebr = (width/divisions) *
                 (0:divisions), showpoints, showlines, maintitle,
               ylim, angle = angle, density = density, col = col,
               jitter = jitter, xlab = xlab, ylab = ylab, subtitle = subtitle,
@@ -119,3 +119,4 @@ plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "
   }
   invisible(NULL)
 }
+

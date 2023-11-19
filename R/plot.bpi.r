@@ -55,7 +55,7 @@
 #'   (\code{plot}, \code{hist}, \code{lines}, \code{points}, etc)
 #' @return Just plots
 #' @author Jeff Laake, Jon Bishop, David Borchers, David L Miller
-plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "",
+plot.bpi=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "",
                          showlines = TRUE, showpoints = TRUE, ylim = c(0, 1), angle = NULL,
                          density = NULL, col = "lightgrey", jitter = NULL, divisions = 25,
                          pages = 0, xlab = "Distance", ylab = "Detection probability",
@@ -77,8 +77,8 @@ plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "
   p10=p1-p11
   #  01
   p01=p2-p11
-  gxlist <- list(p1, p2, (p1+ p2 - p1 * p2),
-                 p1 * p2,p10,p01)
+  gxlist <- list(p1, p2, (p10+ p01 + p11),
+                 p11,p10,p01)
   if (is.null(nc)) {
     nc <- round(sqrt(min(length(xmat$distance[xmat$observer ==
                                                 1 & xmat$detected == 1]), length(xmat$distance[xmat$observer ==
@@ -100,7 +100,7 @@ plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "
   #  oask <- plot_layout(which, pages)
   #  on.exit(devAskNewPage(oask))
   for (wh in which[which < 7]) {
-    mrdstl:::plot_uncond(model, obs=wh, xmat=xmat, gxvalues = gxlist[[wh]],
+    plot_uncond(model, obs=wh, xmat=xmat, gxvalues = gxlist[[wh]],
                 nc, finebr = (width/divisions) * (0:divisions), breaks,
                 showpoints, showlines, maintitle, ylim, angle = angle,
                 density = density, col = col, jitter = jitter, xlab = xlab,
@@ -110,7 +110,7 @@ plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "
   #data$offsetvalue <- 0
   if (is.element(7, which)) {
     gxvalues <- (p1*delta)[xmat$detected[xmat$observer == 2] == 1]
-    mrdstl:::plot_cond(1, xmat, gxvalues, model, nc, breaks, finebr = (width/divisions) *
+    plot_cond(1, xmat, gxvalues, model, nc, breaks, finebr = (width/divisions) *
                 (0:divisions), showpoints, showlines, maintitle,
               ylim, angle = angle, density = density, col = col,
               jitter = jitter, xlab = xlab, ylab = ylab, subtitle = subtitle,
@@ -118,7 +118,7 @@ plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "
   }
   if (is.element(8, which)) {
     gxvalues <- (p2*delta)[xmat$detected[xmat$observer == 1] == 1]
-    mrdstl:::plot_cond(2, xmat, gxvalues, model, nc, breaks, finebr = (width/divisions) *
+    plot_cond(2, xmat, gxvalues, model, nc, breaks, finebr = (width/divisions) *
                 (0:divisions), showpoints, showlines, maintitle,
               ylim, angle = angle, density = density, col = col,
               jitter = jitter, xlab = xlab, ylab = ylab, subtitle = subtitle,

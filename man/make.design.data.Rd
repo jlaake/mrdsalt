@@ -10,7 +10,7 @@ make.design.data(x, persons = NULL)
 \arguments{
 \item{x}{a dataframe with a single record per observation}
 
-\item{persons}{a dataframe containing a single record per observation and 2 columns indicating which person was in observer (position) 1 and 2 which provides the opportnity to estimate of personnel effects on detection}
+\item{persons}{a dataframe containing a single record per observation and 2 columns indicating which person was in observer (position) 1 and 2 which provides the opportunity to estimate of personnel effects on detection}
 }
 \value{
 a dataframe with 2 records for each observation (format of mrds package)

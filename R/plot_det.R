@@ -1,13 +1,16 @@
 #' Plot some detection function values. This is very simple at present.
-#' @param mod fitted result from fit_mrdstl
+#' @param mod fitted result from fit_mrdsalt
 #' @return None
 #' @author Jeff Laake
 #' @export plot_det plot_uncond plot_cond plot.loglinear
+#' @import mrds
+#' @importFrom graphics barplot hist lines par  points title
+#' @importFrom stats as.formula glm integrate model.matrix predict rbinom rmultinom rnorm runif
 plot_det=function(mod)
 {
   if(is.null(mod$mrmodel$pformula))stop("full model result with formulas not used in call")
   # show plots of detection function for observer 1,2 duplicates, pooled and conditional
-  prob=p.ll(par=mod$par,mod$data,pformula=mod$mrmodel$pformula,dformula=mod$mrmodel$dformula)$prob
+  prob=p.loglinear(par=mod$par,mod$data,pformula=mod$mrmodel$pformula,dformula=mod$mrmodel$dformula)$prob
   delta=prob[,3]/((prob[,1]+prob[,3])*(prob[,2]+prob[,3]))
 
   par(mfrow=c(2,2))
@@ -23,71 +26,40 @@ plot_det=function(mod)
   return()
 }
 
-plot.loglinear=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "",
-                         showlines = TRUE, showpoints = TRUE, ylim = c(0, 1), angle = NULL,
-                         density = NULL, col = "lightgrey", jitter = NULL, divisions = 25,
-                         pages = 0, xlab = "Distance", ylab = "Detection probability",
-                         subtitle = TRUE, ...)
-{
-  model <- x
-  which <- sort(which)
-  xmat <- model$data
-  prob=p.ll(par=model$par,model$data,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula)$prob
-  p1 = prob[,3]/(prob[,2]+prob[,3]) # conditional probability 1|2
-  p2 = prob[,3]/(prob[,1]+prob[,3]) # conditional probability 2|1
-  delta=prob[,3]/((prob[,1]+prob[,3])*(prob[,2]+prob[,3]))
-  width <- model$meta.data$width
-  left <- model$meta.data$left
-  gxlist <- list(p1/delta, p2/delta, (p1/delta + p2/delta - p1 * p2/delta^2),
-                 p1 * p2/delta^2,p1/delta*(1-p2),p2/delta*(1-p1))
-  if (is.null(nc)) {
-    nc <- round(sqrt(min(length(xmat$distance[xmat$observer ==
-                                                1 & xmat$detected == 1]), length(xmat$distance[xmat$observer ==
-                                                                                                 2 & xmat$detected == 1]), length(xmat$distance[xmat$observer ==
-                                                                                                                                                  1 & xmat$timesdetected == 2]))), 0)
-  }
-  if (model$meta.data$binned) {
-    breaks <- model$meta.data$breaks
-    nc <- length(breaks) - 1
-  }
-  else {
-    if (is.null(breaks)) {
-      breaks <- left + ((width - left)/nc) * (0:nc)
-    }
-    else {
-      nc <- length(breaks) - 1
-    }
-  }
-#  oask <- plot_layout(which, pages)
-#  on.exit(devAskNewPage(oask))
-  for (wh in which[which < 7]) {
-    plot_uncond(model, obs=wh, xmat=xmat, gxvalues = gxlist[[wh]],
-                nc, finebr = (width/divisions) * (0:divisions), breaks,
-                showpoints, showlines, maintitle, ylim, angle = angle,
-                density = density, col = col, jitter = jitter, xlab = xlab,
-                ylab = ylab, subtitle = subtitle, ...)
-  }
-  #data <- model$mr$mr$data
-  #data$offsetvalue <- 0
-  if (is.element(7, which)) {
-    gxvalues <- p1[xmat$detected[xmat$observer == 2] == 1]
-    plot_cond(1, xmat, gxvalues, model, nc, breaks, finebr = (width/divisions) *
-                (0:divisions), showpoints, showlines, maintitle,
-              ylim, angle = angle, density = density, col = col,
-              jitter = jitter, xlab = xlab, ylab = ylab, subtitle = subtitle,
-              ...)
-  }
-  if (is.element(8, which)) {
-    gxvalues <- p2[xmat$detected[xmat$observer == 1] == 1]
-    plot_cond(2, xmat, gxvalues, model, nc, breaks, finebr = (width/divisions) *
-                (0:divisions), showpoints, showlines, maintitle,
-              ylim, angle = angle, density = density, col = col,
-              jitter = jitter, xlab = xlab, ylab = ylab, subtitle = subtitle,
-              ...)
-  }
-  invisible(NULL)
-}
-
+#' Plot conditional detection function from distance sampling model
+#'
+#' Plot proportion of observations detected within distance intervals (for
+#' conditional detection functions) to compare visually the fitted model and
+#' data. Internal function called by \code{plot} methods.
+#'
+#' @aliases plot_cond
+#' @param obs observer code
+#' @param xmat processed data
+#' @param gxvalues detection function values for each observation
+#' @param model fitted model from \code{ddf}
+#' @param nc number of equal-width bins for histogram
+#' @param breaks user define breakpoints
+#' @param finebr fine break values over which line is averaged
+#' @param showpoints logical variable; if \code{TRUE} plots predicted value
+#'   for each observation
+#' @param showlines logical variable; if \code{TRUE} plots average predicted
+#'   value line
+#' @param maintitle main title line for each plot
+#' @param ylim range of y axis (default \code{c(0,1)})
+#' @param angle shading angle for hatching
+#' @param density shading density for hatching
+#' @param col plotting colour
+#' @param jitter scaling option for plotting points.  Jitter is applied to
+#'   points by multiplying the fitted value by a random draw from a normal
+#'   distribution with mean 1 and sd jitter.
+#' @param xlab label for x-axis
+#' @param ylab label for y-axis
+#' @param subtitle if TRUE, shows plot type as sub-title
+#' @param \dots other graphical parameters, passed to the plotting functions
+#'   (\code{plot}, \code{hist}, \code{lines}, \code{points}, etc)
+#' @return NULL
+#' @author Jeff Laake, Jon Bishop, David Borchers
+#' @keywords plot
 plot_cond=function (obs, xmat, gxvalues, model, nc, breaks, finebr, showpoints,
           showlines, maintitle, ylim, angle = -45, density = 20, col = "black",
           jitter = NULL, xlab = "Distance", ylab = "Detection probability",
@@ -118,7 +90,7 @@ plot_cond=function (obs, xmat, gxvalues, model, nc, breaks, finebr, showpoints,
            density = density, col = col, det.plot = TRUE, ...)
   if (showlines) {
     if(model$method=="loglinear")
-      line <- mrdstl:::average.line.cond.ll(finebr, obs, model)
+      line <- average.line.cond.ll(finebr, obs, model)
     else
       line <- mrds:::average.line.cond(finebr, obs, model)
     linevalues <- line$values
@@ -147,6 +119,41 @@ plot_cond=function (obs, xmat, gxvalues, model, nc, breaks, finebr, showpoints,
   }
 }
 
+#' Plot unconditional detection function from distance sampling model
+#'
+#' Plots unconditional detection function for observer=obs observations
+#' overlays histogram, average detection function and values for individual
+#' observations data. Internal function called by \code{plot} methods.
+#'
+#' @aliases plot_uncond
+#' @param model fitted model from \code{ddf}
+#' @param obs value of observer for plot
+#' @param xmat processed data
+#' @param gxvalues detection function values for each observation
+#' @param nc number of equal-width bins for histogram
+#' @param finebr fine break values over which line is averaged
+#' @param breaks user define breakpoints
+#' @param showpoints logical variable; if TRUE plots predicted value for each
+#'   observation
+#' @param showlines logical variable; if TRUE plots average predicted value line
+#' @param maintitle main title line for each plot
+#' @param ylim range of y axis; defaults to (0,1)
+#' @param return.lines if TRUE, returns values for line
+#' @param angle shading angle for hatching
+#' @param density shading density for hatching
+#' @param col plotting colour
+#' @param jitter scaling option for plotting points.  Jitter is applied to
+#'   points by multiplying the fitted value by a random draw from a normal
+#'   distribution with mean 1 and sd jitter.
+#' @param xlab label for x-axis
+#' @param ylab label for y-axis
+#' @param subtitle if TRUE, shows plot type as sub-title
+#' @param \dots other graphical parameters, passed to the plotting functions
+#'   (\code{plot}, \code{hist}, \code{lines}, \code{points}, etc)
+#' @return if \code{return.lines==TRUE} returns dataframe \code{average.line}
+#'  otherwise just plots
+#' @author Jeff Laake, Jon Bishop, David Borchers
+#' @keywords plot
 plot_uncond=function (model, obs, xmat, gxvalues, nc, finebr, breaks, showpoints,
           showlines, maintitle, ylim, return.lines = FALSE, angle = -45,
           density = 20, col = "black", jitter = NULL, xlab = "Distance",
@@ -208,7 +215,7 @@ plot_uncond=function (model, obs, xmat, gxvalues, nc, finebr, breaks, showpoints
     if(model$method=="loglinear")
       line <- average.line.ll(finebr, obs, model)
     else
-      line <- average.line(finebr, obs, model)
+      line <- mrds:::average.line(finebr, obs, model)
     linevalues <- line$values
     xgrid <- line$xgrid
     lines(xgrid, linevalues, ...)
@@ -267,14 +274,14 @@ plot.io=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "",
   xmat.p0$distance <- 0
   ddfobj <- model$ds$ds$aux$ddfobj
   if (ddfobj$type == "gamma") {
-    xmat.p0$distance <- rep(apex.gamma(ddfobj), 2)
+    xmat.p0$distance <- rep(mrds:::apex.gamma(ddfobj), 2)
   }
   p0 <- predict(model$mr, newdata = xmat.p0, integrate = FALSE)$fitted
   xmat <- model$mr$mr$data
   cond.det <-predict(model$mr, newdata = xmat, integrate = FALSE)
   width <- model$meta.data$width
   left <- model$meta.data$left
-  detfct.pooled.values <- detfct(xmat$distance[xmat$observer ==
+  detfct.pooled.values <- mrds:::detfct(xmat$distance[xmat$observer ==
                                                  1], ddfobj, width = width - left)
   delta <- cond.det$fitted/(p0 * detfct.pooled.values)
   p1 <- cond.det$p1
@@ -302,7 +309,7 @@ plot.io=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "",
   #oask <- plot_layout(which, pages)
   #on.exit(devAskNewPage(oask))
   for (wh in which[which < 7]) {
-    mrdstl:::plot_uncond(model, wh, xmat, gxvalues = gxlist[[wh]],
+    plot_uncond(model, wh, xmat, gxvalues = gxlist[[wh]],
                 nc, finebr = (width/divisions) * (0:divisions), breaks,
                 showpoints, showlines, maintitle, ylim, angle = angle,
                 density = density, col = col, jitter = jitter, xlab = xlab,
@@ -312,7 +319,7 @@ plot.io=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "",
   data$offsetvalue <- 0
   if (is.element(7, which)) {
     gxvalues <- p1[xmat$detected[xmat$observer == 2] == 1]
-    mrdstl:::plot_cond(1, data, gxvalues, model, nc, breaks, finebr = (width/divisions) *
+    plot_cond(1, data, gxvalues, model, nc, breaks, finebr = (width/divisions) *
                 (0:divisions), showpoints, showlines, maintitle,
               ylim, angle = angle, density = density, col = col,
               jitter = jitter, xlab = xlab, ylab = ylab, subtitle = subtitle,
@@ -320,7 +327,7 @@ plot.io=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "",
   }
   if (is.element(8, which)) {
     gxvalues <- p2[xmat$detected[xmat$observer == 1] == 1]
-    mrdstl:::plot_cond(2, data, gxvalues, model, nc, breaks, finebr = (width/divisions) *
+    plot_cond(2, data, gxvalues, model, nc, breaks, finebr = (width/divisions) *
                 (0:divisions), showpoints, showlines, maintitle,
               ylim, angle = angle, density = density, col = col,
               jitter = jitter, xlab = xlab, ylab = ylab, subtitle = subtitle,
@@ -338,7 +345,7 @@ average.line<-function (finebr, obs, model)
   }
   else {
     if (model$method == "trial" | model$method == "trial.fi") {
-      newdat <- process.data(model$data, model$meta.data)$xmat
+      newdat <- mrds::process.data(model$data, model$meta.data)$xmat
       newdat <- newdat[newdat$observer == obs & newdat$detected ==
                          1, ]
     }
@@ -359,10 +366,10 @@ average.line<-function (finebr, obs, model)
     ddfobj <- model$ds$ds$aux$ddfobj
     if (ddfobj$type == "gamma") {
       if (model$method == "io") {
-        newdat$distance <- rep(apex.gamma(ddfobj), 2)
+        newdat$distance <- rep(mrds:::apex.gamma(ddfobj), 2)
       }
       else {
-        newdat$distance <- as.vector(apex.gamma(ddfobj))
+        newdat$distance <- as.vector(mrds:::apex.gamma(ddfobj))
       }
     }
     if (model$method == "trial") {
@@ -398,7 +405,7 @@ average.line<-function (finebr, obs, model)
     par <- model$ds$par
     if (model$method == "io" | model$method == "trial" |
         model$method == "rem") {
-      detfct.pooled.values <- detfct(newdat$distance[newdat$observer ==
+      detfct.pooled.values <- mrds:::detfct(newdat$distance[newdat$observer ==
                                                        1], ddfobj, width = model$meta.data$width - model$meta.data$left)
       deltax <- detfct.pooled.values/(cond.det$fitted/g0)
     }
@@ -436,7 +443,7 @@ average.line.ll<-function (finebr, obs, model)
     x <- (finebr[i] + finebr[i + 1])/2
     xgrid <- c(xgrid, x)
     newdat$distance <- rep(x, dim(newdat)[1])
-    prob=p.ll(par=model$par,newdat,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula)$prob
+    prob=p.loglinear(par=model$par,newdat,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula)$prob
     p1 = prob[,3]/(prob[,2]+prob[,3]) # conditional probability 1|2
     p2 = prob[,3]/(prob[,1]+prob[,3]) # conditional probability 2|1
     delta=prob[,3]/((prob[,1]+prob[,3])*(prob[,2]+prob[,3]))

@@ -3,7 +3,6 @@
 #' For a set of observations, computes observer specific probabilities, integrals and delta values See Buckland et al, (2010) for
 #' definitions
 #'
-#' @usage p.bpi(par,x,p.formula,delta.formula,width,indep=FALSE,PI=FALSE,use.offset=FALSE,posdep=FALSE)
 #' @param par model parameter values
 #' @param x observation dataframe
 #' @param p.formula formula for detection probabilities
@@ -21,6 +20,7 @@ p.bpi=function(par,x,p.formula,delta.formula,width,indep=FALSE,PI=FALSE,
   # create design matrix for p1,p2 and delta
   xmat1=model.matrix(p.formula,x[x$observer==1,])
   xmat2=model.matrix(p.formula,x[x$observer==2,])
+
   dmat=model.matrix(delta.formula,x[x$observer==1,])
   parnames=c(paste("p:",colnames(xmat1)),paste("delta:",colnames(dmat)))
   if(PI & all(dmat[,1]==1)) stop("\nError: No intercept allowed with PI model\n")
@@ -41,18 +41,6 @@ p.bpi=function(par,x,p.formula,delta.formula,width,indep=FALSE,PI=FALSE,
   }
   # compute integral of detection function over distance x; loop over covariate values
   n=dim(xmat1)[1]
-  integrals=vector(mode="numeric",length=n)
-  if(all(unique(c(all.vars(p.formula),all.vars(delta.formula)))%in%c("distance","observer")))
-  {
-    integrals=rep(integratelogistic(x[x$observer==1,][1,],x[x$observer==2,][1,],
-                      list(p.formula=p.formula,delta.formula=delta.formula),
-                      beta,gamma,width,indep,PI,use.offset),n)
-  } else
-  {
-    for (i in 1:n)
-      integrals[i]=integratelogistic(x[x$observer==1,][i,],x[x$observer==2,][i,],
-                                     list(p.formula=p.formula,delta.formula=delta.formula),
-                                     beta,gamma,width,indep,PI,use.offset)
-  }
+  integrals=mu.bpi(x,n,p.formula,delta.formula,beta,gamma,width,indep,PI,use.offset)
   return(list(p1=p1,p2=p2,mudot=integrals,delta.values=delta.values,parnames=parnames))
 }

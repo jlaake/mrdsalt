@@ -1,10 +1,9 @@
-#' Generate a set of double observer detection histories from population data and model
+#' Generate a set of double observer detection histories from population data and bpi model
 #'
 #' The return value is the dataframe of the observations seen by at least
 #' one observer and the field detected is added to indicate whether the observer
 #' detected the observation.  Those missed by both observers are not included.
-#' @usage gen.history(x,par,p.formula,delta.formula,indep=FALSE,PI=FALSE,debug=FALSE,use.offset=FALSE)
-#' @param x population data - 1 row per observer and must contain and observer and object fields at a minimum
+#' @param x population data - 1 row per observer and must contain distance and observer and object fields at a minimum
 #' @param par model parameter values
 #' @param p.formula formula for true detection probabilities
 #' @param delta.formula formula for delta dependence function
@@ -13,10 +12,17 @@
 #' @param debug plots p1, conditional p1 and delta values
 #' @param use.offset if TRUE use offset value for logit
 #' @export
-#' @return simulation observation dataframe;The return value is the dataframe of the observations
-#' seen by at least one observer and the field detected is added to indicate whether the observer
-#'  detected the observation.  Those missed by both observers are not included.
-gen.history=function(x,par,p.formula,delta.formula,indep=FALSE,PI=FALSE,debug=FALSE,use.offset=FALSE)
+#' @return simulation observation dataframe;The return value is the dataframe of the observations seen by at least one observer and the field detected is added to indicate whether the observer detected the observation.  Those missed by both observers are not included.
+#' @examples
+#' N=1000
+#' W=10
+#' x=sim.bpi(x=data.frame(observer=rep(c(1,2),times=N),object=rep(1:N,each=2),
+#'  distance=rep(runif(N/2,0,W),each=2)),
+#'  par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178),
+#'  p.formula=~observer*distance,delta.formula=~-1+distance,PI=TRUE)
+#'
+sim.bpi=function(x,par,p.formula,delta.formula,indep=FALSE,PI=TRUE,
+                     debug=FALSE,use.offset=FALSE)
 {
   #
   #  Setup p's and deltas

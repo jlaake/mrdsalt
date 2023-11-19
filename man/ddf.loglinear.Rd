@@ -22,6 +22,8 @@ ddf.loglinear(
 \item{meta.data}{list containing width and other fields not currently used}
 
 \item{control}{list containing method (for optimization), debug (TRUE or FALSE), initial (optional starting values) and other fields not currently used}
+
+\item{call}{call syntax to ddf}
 }
 \value{
 list containing: fitted parameter values (par), AIC, optimx result with avep and NHat added, pformula and dformula.
@@ -36,16 +38,41 @@ par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178)
 W=10
 N=1000
 set.seed(1083821)
-x=sim_data(N,W,par=par)
+x=sim.loglinear(N,W,par=par)
 #create data structure with 2 records for each observation
 dd=make.design.data(x)
 #fit model
-results=ddf(mrmodel=list(pformula=~observer*distance,dformula=~-1+distance),data=dd,method="loglinear",meta.data=list(width=W),control=list(method="nlminb",debug=FALSE))
+results=ddf(mrmodel=list(pformula=~observer*distance,dformula=~-1+distance),
+data=dd,method="loglinear",meta.data=list(width=W),
+control=list(method="nlminb",debug=FALSE))
+results$criterion
 #N hat
 Nhat=nrow(x)/results$mod$avep
 Nhat
 # \%diff
-100*(N-Nhat)/N
+100*(Nhat-N)/N
+# unconditonal detection fcts
+par(mfrow=c(3,2))
+plot(results,1:6,showpoints=FALSE)
+# conditional detection functions
+par(mfrow=c(1,2))
+plot(results,7:8,showlines=FALSE)
+
+set.seed(1083821)
+x=sim.bpi(x=data.frame(observer=rep(c(1,2),times=N),object=rep(1:N,each=2),
+ distance=rep(runif(N/2,0,W),each=2)),
+ par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178),
+ p.formula=~observer*distance,delta.formula=~-1+distance,PI=TRUE)
+ #' #fit model
+results=ddf(mrmodel=list(pformula=~observer*distance,dformula=~-1+distance),
+data=x,method="loglinear",meta.data=list(width=W),
+control=list(method="nlminb",debug=FALSE))
+results$criterion
+#N hat
+Nhat=nrow(x)/results$mod$avep
+Nhat
+# \%diff
+100*(Nhat-N)/N
 # unconditonal detection fcts
 par(mfrow=c(3,2))
 plot(results,1:6,showpoints=FALSE)

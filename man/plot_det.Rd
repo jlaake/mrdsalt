@@ -7,7 +7,7 @@
 plot_det(mod)
 }
 \arguments{
-\item{mod}{fitted result from fit_mrdstl}
+\item{mod}{fitted result from fit_mrdsalt}
 }
 \value{
 None

@@ -4,7 +4,18 @@
 \alias{ll.bpi}
 \title{Log likelihood calculation for Buckland et al 2010 model}
 \usage{
-ll.bpi(par,x,p.formula,delta.formula,width,debug=FALSE,indep=FALSE,PI=FALSE,use.offset=FALSE,posdep=FALSE)
+ll.bpi(
+  par,
+  x,
+  p.formula,
+  delta.formula,
+  width,
+  debug = FALSE,
+  indep = FALSE,
+  PI = FALSE,
+  use.offset = FALSE,
+  posdep = FALSE
+)
 }
 \arguments{
 \item{par}{model parameter values}

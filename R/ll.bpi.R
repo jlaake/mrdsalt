@@ -3,7 +3,6 @@
 #' For a set of observations, computes observer specific probabilities, integrals and delta values See Buckland et al, (2010) for
 #' definitions
 #'
-#' @usage ll.bpi(par,x,p.formula,delta.formula,width,debug=FALSE,indep=FALSE,PI=FALSE,use.offset=FALSE,posdep=FALSE)
 #' @param par model parameter values
 #' @param x observation dataframe
 #' @param p.formula formula for detection probabilities

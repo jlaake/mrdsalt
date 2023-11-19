@@ -7,6 +7,7 @@
 #' @param x a design matrix for delta
 #' @param p1 detection probabilities for observer 1
 #' @param p2 detection probabilities for observer 2
+#' @param gamma parameters for delta
 #' @param PI TRUE if this is a point independence model
 #' @param use.offset if TRUE use offset value for logit
 #' @export

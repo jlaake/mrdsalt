@@ -13,6 +13,8 @@ delta(x,p1,p2,gamma,PI=FALSE,use.offset=FALSE)
 
 \item{p2}{detection probabilities for observer 2}
 
+\item{gamma}{parameters for delta}
+
 \item{PI}{TRUE if this is a point independence model}
 
 \item{use.offset}{if TRUE use offset value for logit}
