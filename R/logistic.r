@@ -6,9 +6,9 @@
 #' @param distance vector of distance values
 #' @param x1 covariate data for observer1
 #' @param x2 covariate data for observer2
-#' @param models model list ofp and delta formulas for detection probabilities
+#' @param models model list of p and delta formulas for detection probabilities
 #' @param beta parameters for p
-#' @param gamma prameters for delta dependence function
+#' @param gamma parameters for delta dependence function
 #' @param indep if TRUE, uses full independence model
 #' @param PI if TRUE, uses point independence model
 #' @param use.offset if TRUE use offset value for logit
@@ -41,14 +41,14 @@ logisticbyx=function (distance, x1, x2, models, beta, gamma,indep=FALSE,PI=FALSE
 
 #' Computes integral of logistic function from 0 to width
 #'
-#' Uses logisticbyx to compute integral from 0 to width for a specfic set of covariate values
+#' Uses logisticbyx to compute integral from 0 to width for a specific set of covariate values
 #'
 #' @usage integratelogistic(x1, x2, models, beta, gamma, width,indep,PI,use.offset)
 #' @param x1 covariate data for observer1
 #' @param x2 covariate data for observer2
-#' @param models model list ofp and delta formulas for detection probabilities
+#' @param models model list of p and delta formulas for detection probabilities
 #' @param beta parameters for p
-#' @param gamma prameters for delta dependence function
+#' @param gamma parameters for delta dependence function
 #' @param width transect half-width
 #' @param indep if TRUE, uses full independence model
 #' @param PI if TRUE, uses point independence model
@@ -57,7 +57,7 @@ logisticbyx=function (distance, x1, x2, models, beta, gamma,indep=FALSE,PI=FALSE
 #' @return integral value
 integratelogistic=function (x1, x2, models, beta, gamma, width,indep,PI,use.offset)
 {
-  integrate(logisticbyx,lower=0,upper=width, subdivisions=10, rel.tol=0.01,
-            abs.tol=0.01,stop.on.error=FALSE,x1=x1,x2=x2, models=models, beta=beta, gamma=gamma,
+  integrate(logisticbyx,lower=0,upper=width,subdivisions=10, abs.tol=0.01,rel.tol=0.01,
+            stop.on.error=FALSE,x1=x1,x2=x2, models=models, beta=beta, gamma=gamma,
             indep=indep,PI=PI,use.offset=use.offset)$value
 }

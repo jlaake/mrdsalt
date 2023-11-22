@@ -69,7 +69,7 @@ data=x,method="loglinear",meta.data=list(width=W),
 control=list(method="nlminb",debug=FALSE))
 results$criterion
 #N hat
-Nhat=nrow(x)/results$mod$avep
+Nhat=nrow(x)/2/results$mod$avep
 Nhat
 # \%diff
 100*(Nhat-N)/N

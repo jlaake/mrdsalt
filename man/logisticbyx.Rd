@@ -13,11 +13,11 @@ logisticbyx(distance, x1, x2, models, beta, gamma,indep=FALSE,PI=FALSE,use.offse
 
 \item{x2}{covariate data for observer2}
 
-\item{models}{model list ofp and delta formulas for detection probabilities}
+\item{models}{model list of p and delta formulas for detection probabilities}
 
 \item{beta}{parameters for p}
 
-\item{gamma}{prameters for delta dependence function}
+\item{gamma}{parameters for delta dependence function}
 
 \item{indep}{if TRUE, uses full independence model}
 

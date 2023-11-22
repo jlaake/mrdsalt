@@ -17,22 +17,23 @@
 p.bpi=function(par,x,p.formula,delta.formula,width,indep=FALSE,PI=FALSE,
                use.offset=FALSE,posdep=FALSE)
 {
-  # create design matrix for p1,p2 and delta
-  xmat1=model.matrix(p.formula,x[x$observer==1,])
-  xmat2=model.matrix(p.formula,x[x$observer==2,])
+  # create design matrix for p and delta
+  xmat=model.matrix(p.formula,x)
+  #xmat2=model.matrix(p.formula,x[x$observer==2,])
 
   dmat=model.matrix(delta.formula,x[x$observer==1,])
-  parnames=c(paste("p:",colnames(xmat1)),paste("delta:",colnames(dmat)))
+  parnames=c(paste("p:",colnames(xmat)),paste("delta:",colnames(dmat)))
   if(PI & all(dmat[,1]==1)) stop("\nError: No intercept allowed with PI model\n")
   # extract parameter vectors: beta for detection and gamma for delta
-  beta=par[1:dim(xmat1)[2]]
+  beta=par[1:dim(xmat)[2]]
   if(posdep)
-    gamma=exp(par[(1+dim(xmat1)[2]):length(par)])
+    gamma=exp(par[(1+dim(xmat)[2]):length(par)])
   else
-    gamma=par[(1+dim(xmat1)[2]):length(par)]
+    gamma=par[(1+dim(xmat)[2]):length(par)]
   # compute probabilities and delta values
-  p1=invlogit(xmat1,beta)
-  p2=invlogit(xmat2,beta)
+  px=invlogit(xmat,beta)
+  p1=px[seq(1,length(px),2)]
+  p2=px[seq(2,length(px),2)]
   if(indep)
     delta.values=1
   else
@@ -40,7 +41,7 @@ p.bpi=function(par,x,p.formula,delta.formula,width,indep=FALSE,PI=FALSE,
     delta.values=delta(dmat,p1,p2,gamma,PI,use.offset)
   }
   # compute integral of detection function over distance x; loop over covariate values
-  n=dim(xmat1)[1]
+  n=length(p1)
   integrals=mu.bpi(x,n,p.formula,delta.formula,beta,gamma,width,indep,PI,use.offset)
   return(list(p1=p1,p2=p2,mudot=integrals,delta.values=delta.values,parnames=parnames))
 }

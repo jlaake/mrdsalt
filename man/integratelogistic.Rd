@@ -11,11 +11,11 @@ integratelogistic(x1, x2, models, beta, gamma, width,indep,PI,use.offset)
 
 \item{x2}{covariate data for observer2}
 
-\item{models}{model list ofp and delta formulas for detection probabilities}
+\item{models}{model list of p and delta formulas for detection probabilities}
 
 \item{beta}{parameters for p}
 
-\item{gamma}{prameters for delta dependence function}
+\item{gamma}{parameters for delta dependence function}
 
 \item{width}{transect half-width}
 
@@ -29,5 +29,5 @@ integratelogistic(x1, x2, models, beta, gamma, width,indep,PI,use.offset)
 integral value
 }
 \description{
-Uses logisticbyx to compute integral from 0 to width for a specfic set of covariate values
+Uses logisticbyx to compute integral from 0 to width for a specific set of covariate values
 }

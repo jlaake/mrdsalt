@@ -35,3 +35,4 @@ mu.bpi=function(x,n,p.formula,delta.formula,beta,gamma,width,indep,PI,use.offset
   }
   return(integrals)
 }
+
