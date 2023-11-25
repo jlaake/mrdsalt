@@ -18,7 +18,7 @@ vector of predicted average detection probabilities (integrated over x) for each
 Compute average detection probabilities for log-linear model with possible dependence in detections for mark-recapture distance data.
 }
 \seealso{
-\link{mu.loglinear}, \link{p.loglinear}
+\link{integrate_mu.loglinear}
 }
 \author{
 Jeff Laake

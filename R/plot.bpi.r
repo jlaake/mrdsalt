@@ -66,7 +66,7 @@ plot.bpi=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "",
   left <- model$meta.data$left
   which <- sort(which)
   xmat <- model$data
-  p.list=p.bpi(par=model$par,xmat,model$pformula,model$dformula,width,indep=model$control$indep,PI=model$control$PI,
+  p.list=p.bpi(par=model$par,xmat,model$mrmodel$pformula,model$mrmodel$dformula,indep=model$control$indep,PI=model$control$PI,
                use.offset=model$control$use.offset,posdep=model$control$posdep)
   p1=p.list$p1
   p2=p.list$p2
@@ -109,7 +109,7 @@ plot.bpi=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "",
   #data <- model$mr$mr$data
   #data$offsetvalue <- 0
   if (is.element(7, which)) {
-    gxvalues <- (p1*delta)[xmat$detected[xmat$observer == 2] == 1]
+    gxvalues <- (p1*delta.values)[xmat$detected[xmat$observer == 2] == 1]
     plot_cond(1, xmat, gxvalues, model, nc, breaks, finebr = (width/divisions) *
                 (0:divisions), showpoints, showlines, maintitle,
               ylim, angle = angle, density = density, col = col,
@@ -117,7 +117,7 @@ plot.bpi=function (x, which = 1:6, breaks = NULL, nc = NULL, maintitle = "",
               ...)
   }
   if (is.element(8, which)) {
-    gxvalues <- (p2*delta)[xmat$detected[xmat$observer == 1] == 1]
+    gxvalues <- (p2*delta.values)[xmat$detected[xmat$observer == 1] == 1]
     plot_cond(2, xmat, gxvalues, model, nc, breaks, finebr = (width/divisions) *
                 (0:divisions), showpoints, showlines, maintitle,
               ylim, angle = angle, density = density, col = col,

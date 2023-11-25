@@ -23,11 +23,8 @@
 #' data=dd,method="loglinear",meta.data=list(width=W),
 #' control=list(method="nlminb",debug=FALSE))
 #' results$criterion
-#' #N hat
-#' Nhat=nrow(x)/results$mod$avep
-#' Nhat
 #' # %diff
-#' 100*(Nhat-N)/N
+#' 100*(results$Nhat-N)/N
 #' # unconditonal detection fcts
 #' par(mfrow=c(3,2))
 #' plot(results,1:6,showpoints=FALSE)
@@ -39,17 +36,14 @@
 #' x=sim.bpi(x=data.frame(observer=rep(c(1,2),times=N),object=rep(1:N,each=2),
 #'  distance=rep(runif(N/2,0,W),each=2)),
 #'  par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178),
-#'  p.formula=~observer*distance,delta.formula=~-1+distance,PI=TRUE)
+#'  pformula=~observer*distance,dformula=~-1+distance,PI=TRUE)
 #'  #' #fit model
 #' results=ddf(mrmodel=list(pformula=~observer*distance,dformula=~-1+distance),
 #' data=x,method="loglinear",meta.data=list(width=W),
 #' control=list(method="nlminb",debug=FALSE))
 #' results$criterion
-#' #N hat
-#' Nhat=nrow(x)/2/results$mod$avep
-#' Nhat
 #' # %diff
-#' 100*(Nhat-N)/N
+#' 100*(results$Nhat-N)/N
 #' # unconditonal detection fcts
 #' par(mfrow=c(3,2))
 #' plot(results,1:6,showpoints=FALSE)
@@ -97,12 +91,13 @@ ddf.loglinear=function(mrmodel=list(pformula=~-1+observer+observer:distance,dfor
   data=data[data$ch!="00",]
   # only need one record from each data pair
   x=data[seq(1,nrow(data),2),]
-  cmat=matrix(0,ncol=3,nrow=nrow(x))
+  n=nrow(x)
+  cmat=matrix(0,ncol=3,nrow=n)
   cmat[,1]=as.numeric(x$ch=="10")
   cmat[,2]=as.numeric(x$ch=="01")
   cmat[,3]=as.numeric(x$ch=="11")
   # call detprobs just to to check if length par is ok; only really needed if user provided par vector
-  xx=p.loglinear(par,data,pformula=pformula,dformula=dformula)
+  xx=p.loglinear(par,data,pformula,dformula)
   # fit model using optimx
   mod=optimx(par=par,fn=ll.loglinear,cmat=cmat,dd=data,W=meta.data$width,method=control$method,
              pformula=pformula,dformula=dformula,debug=control$debug)
@@ -110,26 +105,6 @@ ddf.loglinear=function(mrmodel=list(pformula=~-1+observer+observer:distance,dfor
   npar=attributes(mod)$npar
   par=as.vector(unlist(mod[paste("p",1:npar,sep="")]))
   names(par)=xx$parnames
-  # compute average p and Nhat
-  n=nrow(x)
-  #without individual covariates
-  if(all(unique(c(all.vars(pformula),all.vars(dformula)))%in%c("distance","observer")))
-  {
-    fitted=integrate(mu.loglinear,lower=0,upper=meta.data$width,dd=data[1:2,],par=par,pformula=pformula,dformula=dformula)$value/meta.data$width
-    mod$avep=fitted
-    fitted=rep(fitted,n)
-    mod$Nhat=n/mod$avep
-  }
-  else
-  {
-    # with individual covariates
-    mod$Nhat=0
-    fitted=NULL
-    for(i in 1:n)
-      fitted=c(fitted,integrate(mu.loglinear,lower=0,upper=meta.data$width,par=par,dd=data[((i-1)*2+1):(i*2),],pformula=pformula,dformula=dformula)$value/meta.data$width)
-    mod$Nhat=sum(1/fitted)
-    mod$avep=n/mod$Nhat
-  }
   # return result with parameter values, AIC, optimx object, formula and data that was used to fit model
   result$hessian=attributes(mod)$details[[3]]
   colnames(result$hessian)=names(par)
@@ -137,10 +112,11 @@ ddf.loglinear=function(mrmodel=list(pformula=~-1+observer+observer:distance,dfor
   result$par=par
   result$lnl=-mod$value
   result$criterion=2*mod$value+2*length(par)
-  result$fitted=fitted
-  result$Nhat=mod$Nhat
-  result$mod=mod
   class(result) <- c("loglinear", "ddf")
+  result$fitted=predict(results)
+  result$Nhat=sum(1/results$fitted)
+  result$avep=n/result$Nhat
+  result$mod=mod
   return(result)
 }
 

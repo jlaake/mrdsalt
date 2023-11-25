@@ -1,10 +1,10 @@
-#' Integral of probability of detection by at least one observer for fitted log-linear model
+#' Computes values for integral of probability of detection by at least one observer for fitted log-linear model
 #'
 #' Calls \link{p.loglinear} to compute 1-1/K for a range of x (distance) values for
 #' each observation to integrate average detection probability by at least one observer.
 #'
 #' @param x vector of distance values from integrate to compute integral
-#' @param par parameter starting values; if NULL they are computed
+#' @param par parameter values
 #' @param dd a single pair of detection records for the integration; the pair is replicated length(x) times to compute probability at each x for the integration
 #' @param pformula formula for detection but excluding the dependence portion
 #' @param dformula model for dependence due residual (unmodelled) heterogeneity

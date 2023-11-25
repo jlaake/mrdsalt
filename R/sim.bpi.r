@@ -5,8 +5,8 @@
 #' detected the observation.  Those missed by both observers are not included.
 #' @param x population data - 1 row per observer and must contain distance and observer and object fields at a minimum
 #' @param par model parameter values
-#' @param p.formula formula for true detection probabilities
-#' @param delta.formula formula for delta dependence function
+#' @param pformula formula for true detection probabilities
+#' @param dformula formula for delta dependence function
 #' @param indep if TRUE, uses full independence model
 #' @param PI if TRUE, uses point independence model
 #' @param debug plots p1, conditional p1 and delta values
@@ -19,16 +19,16 @@
 #' x=sim.bpi(x=data.frame(observer=rep(c(1,2),times=N),object=rep(1:N,each=2),
 #'  distance=rep(runif(N/2,0,W),each=2)),
 #'  par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178),
-#'  p.formula=~observer*distance,delta.formula=~-1+distance,PI=TRUE)
+#'  pformula=~observer*distance,dformula=~-1+distance,PI=TRUE)
 #'
-sim.bpi=function(x,par,p.formula,delta.formula,indep=FALSE,PI=TRUE,
+sim.bpi=function(x,par,pformula,dformula,indep=FALSE,PI=TRUE,
                      debug=FALSE,use.offset=FALSE)
 {
   #
   #  Setup p's and deltas
   #
-  xmat1=model.matrix(p.formula,x[x$observer==1,])
-  xmat2=model.matrix(p.formula,x[x$observer==2,])
+  xmat1=model.matrix(pformula,x[x$observer==1,])
+  xmat2=model.matrix(pformula,x[x$observer==2,])
   N=dim(xmat1)[1]
   beta=par[1:dim(xmat1)[2]]
   p1=invlogit(xmat1,beta)
@@ -37,7 +37,7 @@ sim.bpi=function(x,par,p.formula,delta.formula,indep=FALSE,PI=TRUE,
     delta.values=1
   else
   {
-    dmat=model.matrix(delta.formula,x[x$observer==1,])
+    dmat=model.matrix(dformula,x[x$observer==1,])
     gamma=par[(1+dim(xmat1)[2]):length(par)]
     delta.values=delta(dmat,p1,p2,gamma,PI,use.offset=use.offset)
   }
@@ -72,7 +72,7 @@ sim.bpi=function(x,par,p.formula,delta.formula,indep=FALSE,PI=TRUE,
     p=invlogit(xx,beta=beta)
     if(length(beta)<=2)
     {
-      if(delta.formula==~1)
+      if(dformula==~1)
         xx=matrix(1,nrow=101,ncol=1)
       else
         xx=cbind(rep(1,101),(0:100)/100)
@@ -83,7 +83,7 @@ sim.bpi=function(x,par,p.formula,delta.formula,indep=FALSE,PI=TRUE,
       lines((0:100)/100,2*p-delta.values*p^2,ylim=c(0,1))
     } else
     {
-      if(delta.formula==~1)
+      if(dformula==~1)
         xx=matrix(1,nrow=101*ncov,ncol=1)
       else
         xx=cbind(rep(rep(1,101),ncov),rep((0:100)/100,ncov))

@@ -1,38 +1,32 @@
-#' Integral of probability of detection by at least one observer for fitted bpi model
+#' Computes probability of detection by at least one observer for fitted bpi model at a range of distances to
+#' integrate pooled detection function
 #'
-#' Calls \link{integratelogistic} to compute integrals over detection function values for
-#' each observation to integrate average detection probability by at least one observer.
-#'
-#' @param x observation dataframe
-#' @param n number of integrals to compute
-#' @param p.formula formula for detection probabilities
-#' @param delta.formula formula for delta dependence function
-#' @param beta parameters for p.formula
-#' @param gamma parameters for delta.formula
-#' @param width transect half-width
+#' @param x vector of distance values
+#' @param dd a single pair of detection records for the integration; the pair is replicated length(x) times to compute probability at each x for the integration
+#' @param models model list of p and delta formulas for detection probabilities
+#' @param beta parameters for p
+#' @param gamma parameters for delta dependence function
 #' @param indep if TRUE, uses full independence model
 #' @param PI if TRUE, uses point independence model
 #' @param use.offset if TRUE use offset value for logit
-#' @return vector of n integral values
-#' @author Jeff Laake
+#' @param posdep if TRUE enforces positive dependence in delta
 #' @export
-# compute integral over pooled detection function
-mu.bpi=function(x,n,p.formula,delta.formula,beta,gamma,width,indep,PI,use.offset)
+#' @return vector of values of probability of detection by at least one observer for fitted bpi model at a set of distance
+mu.bpi=function (x, dd, models,par,indep,PI,use.offset,posdep)
 {
-  # compute integral of detection function over distance x; loop over covariate values
-  integrals=vector(mode="numeric",length=n)
-  if(all(unique(c(all.vars(p.formula),all.vars(delta.formula)))%in%c("distance","observer")))
-  {
-    integrals=rep(integratelogistic(x[x$observer==1,][1,],x[x$observer==2,][1,],
-                                    list(p.formula=p.formula,delta.formula=delta.formula),
-                                    beta,gamma,width,indep,PI,use.offset),n)
-  } else
-  {
-    for (i in 1:n)
-      integrals[i]=integratelogistic(x[x$observer==1,][i,],x[x$observer==2,][i,],
-                                     list(p.formula=p.formula,delta.formula=delta.formula),
-                                     beta,gamma,width,indep,PI,use.offset)
-  }
-  return(integrals)
+  # replicate the pair of observation length(x) times
+  dd=dd[rep(1:2,length(x)),]
+  # create distance field using input x values
+  dd$distance=rep(x,each=2)
+  # create object numbers
+  dd$object=rep(1:length(x),each=2)
+  plist=p.bpi(par,dd,models$pformula,models$dformula,indep,PI,use.offset,posdep)
+  p1=plist$p1
+  p2=plist$p2
+  delta.values=plist$delta.values
+  xx=p1+p2-delta.values*p1*p2
+  xx[xx<0]=0
+  xx[xx>1]=1
+  return(xx)
 }
 

@@ -17,19 +17,10 @@ ll.loglinear=function(par,cmat,dd,W,pformula,dformula,debug)
   n=nrow(dd)/2
   # compute multinomial probability values at current set of par values
   prob=p.loglinear(par=par,x=dd,pformula=pformula,dformula=dformula)$prob
-  # if formula only uses distance and observer then compute a single effective strip with (integral of detection function mu)
-  # and compute negative log-likelihood
-  if(all(unique(c(all.vars(pformula),all.vars(dformula)))%in%c("distance","observer")))
-  {
-    esw=integrate(mu.loglinear,lower=0,upper=W,par=par,dd=dd[1:2,],pformula=pformula,dformula=dformula)$value
-    nll=-sum(log(rowSums(prob*cmat)))+n*log(esw)
-  } else
-  {
-    # if other covariates then compute the integral of mu and negative log-likelihood for each observation and sum over observations
-    nll=-sum(log(rowSums(prob*cmat)))
-    for(i in 1:n)
-      nll=nll+log(integrate(mu.loglinear,lower=0,upper=W,par=par,dd=dd[((i-1)*2+1):(i*2),],pformula=pformula,dformula=dformula)$value)
-  }
+  # compute integrals
+  esw=integrate_mu.loglinear(dd,pformula,dformula,par,width=W)
+  #compute negative log-likelihood
+  nll=-sum(log(rowSums(prob*cmat)))+sum(log(esw))
   # if debug, print out results for this iteration and then return nll value to optimx
   if(debug) cat("Par = ",par,"\n","-ll = ",nll)
   return(nll)

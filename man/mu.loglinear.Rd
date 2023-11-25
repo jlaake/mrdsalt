@@ -2,14 +2,14 @@
 % Please edit documentation in R/mu.loglinear.R
 \name{mu.loglinear}
 \alias{mu.loglinear}
-\title{Integral of probability of detection by at least one observer for fitted log-linear model}
+\title{Computes values for integral of probability of detection by at least one observer for fitted log-linear model}
 \usage{
 mu.loglinear(x, par, dd, pformula, dformula)
 }
 \arguments{
 \item{x}{vector of distance values from integrate to compute integral}
 
-\item{par}{parameter starting values; if NULL they are computed}
+\item{par}{parameter values}
 
 \item{dd}{a single pair of detection records for the integration; the pair is replicated length(x) times to compute probability at each x for the integration}
 

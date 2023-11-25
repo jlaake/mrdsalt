@@ -2,49 +2,34 @@
 % Please edit documentation in R/mu.bpi.R
 \name{mu.bpi}
 \alias{mu.bpi}
-\title{Integral of probability of detection by at least one observer for fitted bpi model}
+\title{Computes probability of detection by at least one observer for fitted bpi model at a range of distances to
+integrate pooled detection function}
 \usage{
-mu.bpi(
-  x,
-  n,
-  p.formula,
-  delta.formula,
-  beta,
-  gamma,
-  width,
-  indep,
-  PI,
-  use.offset
-)
+mu.bpi(x, dd, models, par, indep, PI, use.offset, posdep)
 }
 \arguments{
-\item{x}{observation dataframe}
+\item{x}{vector of distance values}
 
-\item{n}{number of integrals to compute}
+\item{dd}{a single pair of detection records for the integration; the pair is replicated length(x) times to compute probability at each x for the integration}
 
-\item{p.formula}{formula for detection probabilities}
-
-\item{delta.formula}{formula for delta dependence function}
-
-\item{beta}{parameters for p.formula}
-
-\item{gamma}{parameters for delta.formula}
-
-\item{width}{transect half-width}
+\item{models}{model list of p and delta formulas for detection probabilities}
 
 \item{indep}{if TRUE, uses full independence model}
 
 \item{PI}{if TRUE, uses point independence model}
 
 \item{use.offset}{if TRUE use offset value for logit}
+
+\item{posdep}{if TRUE enforces positive dependence in delta}
+
+\item{beta}{parameters for p}
+
+\item{gamma}{parameters for delta dependence function}
 }
 \value{
-vector of n integral values
+vector of values of probability of detection by at least one observer for fitted bpi model at a set of distance
 }
 \description{
-Calls \link{integratelogistic} to compute integrals over detection function values for
-each observation to integrate average detection probability by at least one observer.
-}
-\author{
-Jeff Laake
+Computes probability of detection by at least one observer for fitted bpi model at a range of distances to
+integrate pooled detection function
 }

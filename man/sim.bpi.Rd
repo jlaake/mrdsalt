@@ -7,8 +7,8 @@
 sim.bpi(
   x,
   par,
-  p.formula,
-  delta.formula,
+  pformula,
+  dformula,
   indep = FALSE,
   PI = TRUE,
   debug = FALSE,
@@ -20,9 +20,9 @@ sim.bpi(
 
 \item{par}{model parameter values}
 
-\item{p.formula}{formula for true detection probabilities}
+\item{pformula}{formula for true detection probabilities}
 
-\item{delta.formula}{formula for delta dependence function}
+\item{dformula}{formula for delta dependence function}
 
 \item{indep}{if TRUE, uses full independence model}
 
@@ -46,6 +46,6 @@ W=10
 x=sim.bpi(x=data.frame(observer=rep(c(1,2),times=N),object=rep(1:N,each=2),
  distance=rep(runif(N/2,0,W),each=2)),
  par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178),
- p.formula=~observer*distance,delta.formula=~-1+distance,PI=TRUE)
+ pformula=~observer*distance,dformula=~-1+distance,PI=TRUE)
 
 }

@@ -46,11 +46,8 @@ results=ddf(mrmodel=list(pformula=~observer*distance,dformula=~-1+distance),
 data=dd,method="bpi",meta.data=list(width=W),
 control=list(method="nlminb",debug=FALSE))
 results$criterion
-#N hat
-Nhat=nrow(x)/results$mod$avep
-Nhat
 # \%diff
-100*(Nhat-N)/N
+100*(results$Nhat-N)/N
 # unconditonal detection fcts
 par(mfrow=c(3,2))
 plot(results,1:6,showpoints=FALSE)
@@ -62,17 +59,14 @@ set.seed(1083821)
 x=sim.bpi(x=data.frame(observer=rep(c(1,2),times=N),object=rep(1:N,each=2),
  distance=rep(runif(N/2,0,W),each=2)),
  par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178),
- p.formula=~observer*distance,delta.formula=~-1+distance,PI=TRUE)
+ pformula=~observer*distance,dformula=~-1+distance,PI=TRUE)
 #fit model
 results=ddf(mrmodel=list(pformula=~observer*distance,dformula=~-1+distance),
 data=x,method="bpi",meta.data=list(width=W),
 control=list(method="nlminb",debug=FALSE))
 results$criterion
-#N hat
-Nhat=nrow(x)/2/results$mod$avep
-Nhat
 # \%diff
-100*(Nhat-N)/N
+100*(results$Nhat-N)/N
 # unconditonal detection fcts
 par(mfrow=c(3,2))
 plot(results,1:6,showpoints=FALSE)

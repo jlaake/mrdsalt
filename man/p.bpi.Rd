@@ -4,28 +4,16 @@
 \alias{p.bpi}
 \title{Probability calculations for Buckland et al 2010 model}
 \usage{
-p.bpi(
-  par,
-  x,
-  p.formula,
-  delta.formula,
-  width,
-  indep = FALSE,
-  PI = FALSE,
-  use.offset = FALSE,
-  posdep = FALSE
-)
+p.bpi(par, x, pformula, dformula, indep, PI, use.offset, posdep)
 }
 \arguments{
 \item{par}{model parameter values}
 
 \item{x}{observation dataframe}
 
-\item{p.formula}{formula for detection probabilities}
+\item{pformula}{formula for detection probabilities}
 
-\item{delta.formula}{formula for delta dependence function}
-
-\item{width}{transect half-width}
+\item{dformula}{formula for delta dependence function}
 
 \item{indep}{if TRUE, uses full independence model}
 

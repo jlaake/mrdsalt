@@ -23,11 +23,8 @@
 #' data=dd,method="bpi",meta.data=list(width=W),
 #' control=list(method="nlminb",debug=FALSE))
 #' results$criterion
-#' #N hat
-#' Nhat=nrow(x)/results$mod$avep
-#' Nhat
 #' # %diff
-#' 100*(Nhat-N)/N
+#' 100*(results$Nhat-N)/N
 #' # unconditonal detection fcts
 #' par(mfrow=c(3,2))
 #' plot(results,1:6,showpoints=FALSE)
@@ -39,17 +36,14 @@
 #' x=sim.bpi(x=data.frame(observer=rep(c(1,2),times=N),object=rep(1:N,each=2),
 #'  distance=rep(runif(N/2,0,W),each=2)),
 #'  par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178),
-#'  p.formula=~observer*distance,delta.formula=~-1+distance,PI=TRUE)
+#'  pformula=~observer*distance,dformula=~-1+distance,PI=TRUE)
 #' #fit model
 #' results=ddf(mrmodel=list(pformula=~observer*distance,dformula=~-1+distance),
 #' data=x,method="bpi",meta.data=list(width=W),
 #' control=list(method="nlminb",debug=FALSE))
 #' results$criterion
-#' #N hat
-#' Nhat=nrow(x)/2/results$mod$avep
-#' Nhat
 #' # %diff
-#' 100*(Nhat-N)/N
+#' 100*(results$Nhat-N)/N
 #' # unconditonal detection fcts
 #' par(mfrow=c(3,2))
 #' plot(results,1:6,showpoints=FALSE)
@@ -67,7 +61,7 @@ ddf.bpi=function(mrmodel=list(pformula=~-1+observer+observer:distance,
   control <- mrds:::assign.default.values(control, showit = 0, estimate = TRUE,
                                    refit = TRUE, nrefits = 25, initial = NA, lowerbounds = NA,
                                    upperbounds = NA, mono.points = 20,par=NULL,method="nlminb",debug=FALSE,
-                                   indep=FALSE,PI=FALSE,use.offset=FALSE,posdep=FALSE)
+                                   indep=FALSE,PI=TRUE,use.offset=FALSE,posdep=FALSE)
   par=control$par
   data.list <- mrds:::process.data(data, meta.data)
   meta.data <- data.list$meta.data
@@ -94,23 +88,16 @@ ddf.bpi=function(mrmodel=list(pformula=~-1+observer+observer:distance,
   if(any(data$ch=="00"))cat("00 records")
   data=data[data$ch!="00",]
   # call p.bpi just to to check if length par is ok and to get parnames
-  xx=p.bpi(par,data,p.formula=pformula,delta.formula=dformula,width=meta.data$width,indep=control$indep,PI=control$PI,use.offset=control$use.offset,
+  xx=p.bpi(par,x=data,pformula=pformula,dformula=dformula,indep=control$indep,PI=control$PI,use.offset=control$use.offset,
            posdep=control$posdep)
   # fit model using optimx
   mod=optimx(par=par,fn=ll.bpi,x=data,width=meta.data$width,method=control$method,
-             p.formula=pformula,delta.formula=dformula,debug=control$debug,indep=control$indep,PI=control$PI,use.offset=control$use.offset,
+             pformula=pformula,dformula=dformula,debug=control$debug,indep=control$indep,PI=control$PI,use.offset=control$use.offset,
              control=list(maxit=5000),posdep=control$posdep)
   # extract parameters from model output
   npar=attributes(mod)$npar
   par=as.vector(unlist(mod[paste("p",1:npar,sep="")]))
   names(par)=xx$parnames
-  # compute average p and Nhat
-  fitted=p.bpi(par,x=data,p.formula=pformula,delta.formula=dformula,
-               width=meta.data$width,indep=control$indep,PI=control$PI,use.offset=control$use.offset,
-               posdep=control$posdep)$mudot/meta.data$width
-
-  mod$Nhat=sum(1/fitted)
-  mod$avep=length(fitted)/mod$Nhat
   # return result with parameter values, AIC, optimx object, formula and data that was used to fit model
   result$hessian=attributes(mod)$details[[3]]
   colnames(result$hessian)=names(par)
@@ -118,10 +105,13 @@ ddf.bpi=function(mrmodel=list(pformula=~-1+observer+observer:distance,
   result$par=par
   result$lnl=-mod$value
   result$criterion=2*mod$value+2*length(par)
+  class(result) <- c("bpi", "ddf")
+  # compute average p and Nhat
+  fitted=predict(result)
+  result$Nhat=sum(1/fitted)
   result$fitted=fitted
-  result$Nhat=mod$Nhat
+  result$avep=length(fitted)/mod$Nhat
   result$mod=mod
-  class(result) <- c("loglinear", "ddf")
   return(result)
 }
 

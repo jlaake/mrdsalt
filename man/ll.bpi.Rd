@@ -4,27 +4,16 @@
 \alias{ll.bpi}
 \title{Log likelihood calculation for Buckland et al 2010 model}
 \usage{
-ll.bpi(
-  par,
-  x,
-  p.formula,
-  delta.formula,
-  width,
-  debug = FALSE,
-  indep = FALSE,
-  PI = FALSE,
-  use.offset = FALSE,
-  posdep = FALSE
-)
+ll.bpi(par, x, pformula, dformula, width, debug, indep, PI, use.offset, posdep)
 }
 \arguments{
 \item{par}{model parameter values}
 
 \item{x}{observation dataframe}
 
-\item{p.formula}{formula for detection probabilities}
+\item{pformula}{formula for detection probabilities}
 
-\item{delta.formula}{formula for delta dependence function}
+\item{dformula}{formula for delta dependence function}
 
 \item{width}{transect half-width}
 
