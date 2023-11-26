@@ -33,7 +33,7 @@
 #' plot(results,7:8,showlines=FALSE)
 #'
 #' set.seed(1083821)
-#' x=sim.bpi(x=data.frame(observer=rep(c(1,2),times=N),object=rep(1:N,each=2),
+#' x=sim.bpi(x=data.frame(observer=factor(rep(c(1,2),times=N)),object=rep(1:N,each=2),
 #'  distance=rep(runif(N/2,0,W),each=2)),
 #'  par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178),
 #'  pformula=~observer*distance,dformula=~-1+distance,PI=TRUE)
@@ -100,10 +100,12 @@ ddf.loglinear=function(mrmodel=list(pformula=~-1+observer+observer:distance,dfor
   xx=p.loglinear(par,data,pformula,dformula)
   # fit model using optimx
   mod=optimx(par=par,fn=ll.loglinear,cmat=cmat,dd=data,W=meta.data$width,method=control$method,
-             pformula=pformula,dformula=dformula,debug=control$debug)
-  # extract parameters from model output
+             pformula=pformula,dformula=dformula,debug=control$debug,control=control$control)
+  if(mod$convcode!=0)warning("\nmodel did not converge")
+   # extract parameters from model output
   npar=attributes(mod)$npar
   par=as.vector(unlist(mod[paste("p",1:npar,sep="")]))
+  if(any(is.na(par)))stop("invalid parameter values")
   names(par)=xx$parnames
   # return result with parameter values, AIC, optimx object, formula and data that was used to fit model
   result$hessian=attributes(mod)$details[[3]]

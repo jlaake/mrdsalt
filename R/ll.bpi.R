@@ -37,7 +37,7 @@ ll.bpi=function(par,x,pformula,dformula,width,debug,indep,PI,
   p01=p2-p11
   # compute integrals
   esw=integrate_mu.bpi(x,n=nrow(x)/2,pformula,dformula,par,width,indep,PI,use.offset,posdep)
-  # compute negative loglikelihood
+  # compute negative log-likelihood
   lnl=sum((x$detected[x$observer==1]*(1-x$detected[x$observer==2]))*log(p10))+
     sum((x$detected[x$observer==2]*(1-x$detected[x$observer==1]))*log(p01))+
     sum((x$detected[x$observer==1]*x$detected[x$observer==2])*log(p11))    -

@@ -16,7 +16,7 @@
 #' @examples
 #' N=1000
 #' W=10
-#' x=sim.bpi(x=data.frame(observer=rep(c(1,2),times=N),object=rep(1:N,each=2),
+#' x=sim.bpi(x=data.frame(observer=factor(rep(c(1,2),times=N)),object=rep(1:N,each=2),
 #'  distance=rep(runif(N/2,0,W),each=2)),
 #'  par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178),
 #'  pformula=~observer*distance,dformula=~-1+distance,PI=TRUE)
@@ -60,6 +60,7 @@ sim.bpi=function(x,par,pformula,dformula,indep=FALSE,PI=TRUE,
   data1$detected=x1[seen]
   data2$detected=x2[seen]
   data=rbind(data1,data2)
+  data$ch=paste(data1$detected,data2$detected,sep="")
   if(debug)
   {
     ncov=100

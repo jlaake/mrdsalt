@@ -22,7 +22,10 @@ integrate_mu.bpi=function(x,n,pformula,dformula,par,width,indep,PI,use.offset,po
   integrals=vector(mode="numeric",length=n)
   if(all(unique(c(all.vars(pformula),all.vars(dformula)))%in%c("distance","observer")))
   {
-    integrals=rep(integrate(mu.bpi,lower=0,upper=width,subdivisions=10, abs.tol=0.01,rel.tol=0.01,
+    #integrals=rep(integrate(mu.bpi,lower=0,upper=width,subdivisions=10, abs.tol=0.01,rel.tol=0.01,
+    #                        stop.on.error=FALSE,dd=x[1:2,], models=list(pformula=pformula,dformula=dformula),
+    #                        par=par,indep=indep,PI=PI,use.offset=use.offset,posdep=posdep)$value,n)
+    integrals=rep(integrate(mu.bpi,lower=0,upper=width,
               stop.on.error=FALSE,dd=x[1:2,], models=list(pformula=pformula,dformula=dformula),
                par=par,indep=indep,PI=PI,use.offset=use.offset,posdep=posdep)$value,n)
   } else

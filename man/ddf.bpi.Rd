@@ -56,7 +56,7 @@ par(mfrow=c(1,2))
 plot(results,7:8,showlines=FALSE)
 
 set.seed(1083821)
-x=sim.bpi(x=data.frame(observer=rep(c(1,2),times=N),object=rep(1:N,each=2),
+x=sim.bpi(x=data.frame(observer=factor(rep(c(1,2),times=N)),object=rep(1:N,each=2),
  distance=rep(runif(N/2,0,W),each=2)),
  par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178),
  pformula=~observer*distance,dformula=~-1+distance,PI=TRUE)

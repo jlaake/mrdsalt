@@ -13,13 +13,13 @@
 #' @param posdep if TRUE enforces positive dependence in delta
 #' @export
 #' @return list of vectors for p1,p2, integrals and delta values
-p.bpi=function(par,x,pformula,dformula,indep,PI,use.offset,posdep)
+p.bpi=function(par,x,pformula,dformula,indep,PI,use.offset,posdep,test=TRUE)
 {
   # create design matrix for p and delta
   xmat=model.matrix(pformula,x)
   dmat=model.matrix(dformula,x[x$observer==1,])
   parnames=c(paste("p:",colnames(xmat)),paste("delta:",colnames(dmat)))
-  if(PI & all(dmat[,1]==1)) stop("\nError: No intercept allowed with PI model\n")
+  if(PI & colnames(dmat)[1]=="(Intercept)") stop("\nError: No intercept allowed with PI model\n")
   # extract parameter vectors: beta for detection and gamma for delta
   beta=par[1:dim(xmat)[2]]
   if(posdep)

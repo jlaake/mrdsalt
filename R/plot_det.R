@@ -214,6 +214,8 @@ plot_uncond=function (model, obs, xmat, gxvalues, nc, finebr, breaks, showpoints
   {
     if(model$method=="loglinear")
       line <- average.line.ll(finebr, obs, model)
+    else if(model$method=="bpi")
+      line <- average.line.bpi(finebr, obs, model)
     else
       line <- mrds:::average.line(finebr, obs, model)
     linevalues <- line$values
@@ -465,6 +467,41 @@ average.line.ll<-function (finebr, obs, model)
       linevalues <- c(linevalues, sum(p1/delta*(1-p2)/prob.det)/sum(1/prob.det))
     } else
       linevalues <- c(linevalues, sum(p2/delta*(1-p1)/prob.det)/sum(1/prob.det))
+  }
+  return(list(xgrid = xgrid, values = linevalues))
+}
+
+average.line.bpi<-function (finebr, obs, model)
+{
+  xgrid <- NULL
+  linevalues <- NULL
+  newdat <- model$data
+  prob.det=predict.bpi(model)
+  for (i in 1:(length(finebr) - 1)) {
+    x <- (finebr[i] + finebr[i + 1])/2
+    xgrid <- c(xgrid, x)
+    newdat$distance <- rep(x, dim(newdat)[1])
+    plist=p.bpi(par=model$par,newdat,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula,
+                indep=model$control$indep,PI=model$control$PI,use.offset=model$control$use.offset,
+                posdep=model$control$posdep)
+    width <- model$meta.data$width
+    left <- model$meta.data$left
+    if (obs == 1) {
+      linevalues <- c(linevalues, sum(plist$p1/prob.det)/sum(1/prob.det))
+    }
+    else if (obs == 2) {
+      linevalues <- c(linevalues, sum(plist$p2/prob.det)/sum(1/prob.det))
+    }
+    else if (obs == 3) {
+      linevalues <- c(linevalues, sum((plist$p1 + plist$p2 - plist$p1 * plist$p2*plist$delta.values)/prob.det)/sum(1/prob.det))
+    }
+    else if(obs==4) {
+      linevalues <- c(linevalues, sum(plist$p1*plist$p2*plist$delta.values/prob.det)/sum(1/prob.det))
+    }
+    else if(obs==5) {
+      linevalues <- c(linevalues, sum(plist$p1*(1-plist$p2*plist$delta.values)/prob.det)/sum(1/prob.det))
+    } else
+      linevalues <- c(linevalues, sum(plist$p2*(1-plist$p1*plist$delta.values)/prob.det)/sum(1/prob.det))
   }
   return(list(xgrid = xgrid, values = linevalues))
 }
