@@ -115,8 +115,8 @@ ddf.loglinear=function(mrmodel=list(pformula=~-1+observer+observer:distance,dfor
   result$lnl=-mod$value
   result$criterion=2*mod$value+2*length(par)
   class(result) <- c("loglinear", "ddf")
-  result$fitted=predict(results)
-  result$Nhat=sum(1/results$fitted)
+  result$fitted=predict(result)
+  result$Nhat=sum(1/result$fitted)
   result$avep=n/result$Nhat
   result$mod=mod
   return(result)

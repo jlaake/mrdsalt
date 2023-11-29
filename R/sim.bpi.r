@@ -27,18 +27,18 @@ sim.bpi=function(x,par,pformula,dformula,indep=FALSE,PI=TRUE,
   #
   #  Setup p's and deltas
   #
-  xmat1=model.matrix(pformula,x[x$observer==1,])
-  xmat2=model.matrix(pformula,x[x$observer==2,])
-  N=dim(xmat1)[1]
-  beta=par[1:dim(xmat1)[2]]
-  p1=invlogit(xmat1,beta)
-  p2=invlogit(xmat2,beta)
+  xmat=model.matrix(pformula,x)
+  N=nrow(x)/2
+  beta=par[1:ncol(xmat)]
+  px=invlogit(xmat,beta)
+  p1=px[seq(1,nrow(x),2)]
+  p2=px[seq(2,nrow(x),2)]
   if(indep)
     delta.values=1
   else
   {
     dmat=model.matrix(dformula,x[x$observer==1,])
-    gamma=par[(1+dim(xmat1)[2]):length(par)]
+    gamma=par[(1+length(beta)):length(par)]
     delta.values=delta(dmat,p1,p2,gamma,PI,use.offset=use.offset)
   }
   if(debug)
