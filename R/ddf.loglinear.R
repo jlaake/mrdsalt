@@ -8,7 +8,6 @@
 #' @return list containing: fitted parameter values (par), AIC, optimx result with avep and NHat added, pformula and dformula.
 #' @seealso ll.loglinear
 #' @author Jeff Laake
-#' @export
 #' @examples
 #' # example code
 #' par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178)
@@ -52,7 +51,7 @@
 #' plot(results,7:8,showlines=FALSE)
 #'
 # fit mrds data with log linear model
-ddf.loglinear=function(mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~-1+distance),data,meta.data=meta.data,control=control,call="")
+ddf.loglinear=function(mrmodel,data,meta.data,control,call)
 {
   save.options <- options()
   options(contrasts = c("contr.treatment", "contr.poly"))

@@ -39,6 +39,7 @@ ddf=function (dsmodel = call(), mrmodel = call(), data, method = "ds",
       stop("For method=", method, ", mrmodel must be specified")
     }
   }
+  ptm=proc.time()
   result <- switch(method,
                    ds = mrds:::ddf.ds(dsmodel = dsmodel, data = data,
                                        meta.data = meta.data, control = control, call = match.call()),
@@ -60,5 +61,6 @@ ddf=function (dsmodel = call(), mrmodel = call(), data, method = "ds",
                    bpi=ddf.bpi(mrmodel = mrmodel, data = data, meta.data = meta.data, control = control,
                                            call = match.call()))
   options(save.options)
+  result$runtime=(proc.time()-ptm)["elapsed"]
   return(result)
 }

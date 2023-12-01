@@ -30,7 +30,7 @@ sim.bpi=function(x,par,pformula,dformula,indep=FALSE,PI=TRUE,
   xmat=model.matrix(pformula,x)
   N=nrow(x)/2
   beta=par[1:ncol(xmat)]
-  px=invlogit(xmat,beta)
+  px=plogis(xmat%*%beta)
   p1=px[seq(1,nrow(x),2)]
   p2=px[seq(2,nrow(x),2)]
   if(indep)
@@ -70,7 +70,7 @@ sim.bpi=function(x,par,pformula,dformula,indep=FALSE,PI=TRUE,
       xx=cbind(rep(1,101),(0:100)/100)
     else
       xx=cbind(rep(rep(1,101),ncov),rep((0:100)/100,ncov),rep(0:(ncov-1)/(ncov-1),each=101))
-    p=invlogit(xx,beta=beta)
+    p=plogis(xx%*%beta)
     if(length(beta)<=2)
     {
       if(dformula==~1)

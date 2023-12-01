@@ -19,7 +19,8 @@ p.bpi=function(par,x,pformula,dformula,indep,PI,use.offset,posdep,test=TRUE)
   xmat=model.matrix(pformula,x)
   dmat=model.matrix(dformula,x[x$observer==1,])
   parnames=c(paste("p:",colnames(xmat)),paste("delta:",colnames(dmat)))
-  if(PI & colnames(dmat)[1]=="(Intercept)") stop("\nError: No intercept allowed with PI model\n")
+  if(!indep)
+    if(PI & colnames(dmat)[1]=="(Intercept)") stop("\nError: No intercept allowed with PI model\n")
   # extract parameter vectors: beta for detection and gamma for delta
   beta=par[1:dim(xmat)[2]]
   if(posdep)

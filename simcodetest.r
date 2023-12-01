@@ -133,3 +133,76 @@ convergence[i,4]=results.4$mod$convcode
 proc.time() - ptm
 
 
+library(splines)
+N=1000
+W=10
+par=c(1,1,.4)
+p0=c(1,1)
+x=data.frame(observer=factor(rep(c(1,2),times=N)),object=rep(1:N,each=2), distance=rep(runif(N,0,W),each=2),cov=rep(rnorm(N,0,1),each=2))
+dd=sim.general(x,halfnormal,W=10,par=par,p0=p0,scale.formula=~-1+observer+cov)
+par(mfrow=c(2,1))
+hist(dd$distance[dd$observer==1&dd$ch%in%c("11","10")],main="Observer 1",xlab="Distance")
+hist(dd$distance[dd$observer==2&dd$ch%in%c("11","01")],main="Observer 2",xlab="Distance")
+#Fit loglinear model to data
+results=ddf(data=dd,meta.data=list(width=W),method="loglinear",mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~-1+distance))
+results$criterion
+# %diff
+100*(results$Nhat-N)/N
+# unconditonal detection fcts
+par(mfrow=c(3,2))
+plot(results,1:6,showpoints=FALSE)
+# conditional detection functions
+par(mfrow=c(1,2))
+plot(results,7:8,showlines=FALSE)
+#Fit PI bpi model to data
+results=ddf(data=dd,meta.data=list(width=W),method="bpi",control=list(indep=FALSE,PI=TRUE),mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~-1+distance))
+results$criterion
+# %diff
+100*(results$Nhat-N)/N
+# unconditional detection fcts
+par(mfrow=c(3,2))
+plot(results,1:6,showpoints=FALSE)
+# conditional detection functions
+par(mfrow=c(1,2))
+plot(results,7:8,showlines=FALSE)
+#Fit full independence bpi model to data
+results=ddf(data=dd,meta.data=list(width=W),control=list(indep=TRUE,PI=FALSE),method="bpi",mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~0))
+results$criterion
+# %diff
+100*(results$Nhat-N)/N
+# unconditional detection fcts
+par(mfrow=c(3,2))
+plot(results,1:6,showpoints=FALSE)
+# conditional detection functions
+par(mfrow=c(1,2))
+plot(results,7:8,showlines=FALSE)
+
+ N=250
+ data(book.tee.data,package="mrds")
+ x=book.tee.data$book.tee.dataframe
+ results=ddf(data=x,mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~-1+distance),
+   meta.data=list(width=4),method="loglinear")
+ results$criterion
+ # %diff
+ 100*(results$Nhat-N)/N
+ # unconditional detection fcts
+ par(mfrow=c(3,2))
+ plot(results,1:6,showpoints=FALSE)
+ # conditional detection functions
+ par(mfrow=c(1,2))
+ plot(results,7:8,showlines=FALSE)
+
+ results=ddf(data=x,mrmodel=list(pformula=~observer*distance,dformula=~-1+bs(distance)),
+             meta.data=list(width=4),method="bpi")
+ results$criterion
+ results$Nhat
+ # %diff
+ 100*(results$Nhat-N)/N
+ # unconditional detection fcts
+ par(mfrow=c(3,2))
+ plot(results,1:6,showpoints=FALSE)
+ # conditional detection functions
+ par(mfrow=c(1,2))
+ plot(results,7:8,showlines=FALSE)
+
+

@@ -5,14 +5,7 @@
 \title{Fits a log-linear model with possible dependence in detection for mark-recapture distance
 data.}
 \usage{
-ddf.loglinear(
-  mrmodel = list(pformula = ~-1 + observer + observer:distance, dformula = ~-1 +
-    distance),
-  data,
-  meta.data = meta.data,
-  control = control,
-  call = ""
-)
+ddf.loglinear(mrmodel, data, meta.data, control, call)
 }
 \arguments{
 \item{mrmodel}{list containing pformula (for detection) and dformula (for dependence)}

@@ -8,7 +8,6 @@
 #' @return list containing: fitted parameter values (par), AIC, optimx result with avep and NHat added, pformula and dformula.
 #' @seealso ll.bpi
 #' @author Jeff Laake
-#' @export
 #' @examples
 #' # example code
 #' par=c( 1.517424, 1.663175, -0.28, -0.5, 0.1311178)
@@ -51,8 +50,7 @@
 #' par(mfrow=c(1,2))
 #' plot(results,7:8,showlines=FALSE)
 #
-ddf.bpi=function(mrmodel=list(pformula=~-1+observer+observer:distance,
-      dformula=~-1+distance),data,meta.data=meta.data,control=control,call="")
+ddf.bpi=function(mrmodel,data,meta.data=meta.data,control=control,call="")
 {
   save.options <- options()
   options(contrasts = c("contr.treatment", "contr.poly"))
