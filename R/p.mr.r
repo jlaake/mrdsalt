@@ -1,4 +1,4 @@
-#' Probability calculations for Buckland et al 2010 model
+#' Probability calculations for mark-recapture type Huggins model
 #'
 #' For a set of observations, computes observer specific probabilities, integrals and delta values See Buckland et al, (2010) for
 #' definitions
@@ -13,29 +13,28 @@
 #' @param posdep if TRUE enforces positive dependence in delta
 #' @export
 #' @return list of vectors for p1,p2, integrals and delta values
-p.bpi=function(par,x,pformula,dformula,indep,PI,use.offset,posdep)
+p.mr=function(par,x,pformula,dformula,indep)
 {
   # create design matrix for p and delta
   xmat=model.matrix(pformula,x)
   dmat=model.matrix(dformula,x[x$observer==1,])
   parnames=c(paste("p:",colnames(xmat)),paste("delta:",colnames(dmat)))
-  if(!indep)
-    if(PI & colnames(dmat)[1]=="(Intercept)") stop("\nError: No intercept allowed with PI model\n")
+  if(colnames(dmat)[1]=="(Intercept)") stop("\nError: No intercept allowed with dependence model\n")
   # extract parameter vectors: beta for detection and gamma for delta
   beta=par[1:dim(xmat)[2]]
-  if(posdep)
-    gamma=exp(par[(1+dim(xmat)[2]):length(par)])
-  else
-    gamma=par[(1+dim(xmat)[2]):length(par)]
   # compute probabilities and delta values
   px=plogis(xmat%*%beta)
-  p1=px[seq(1,length(px),2)]
-  p2=px[seq(2,length(px),2)]
+  p1=px[seq(1,length(px),2)] # probability first observer makes a detection
+  p20=px[seq(2,length(px),2)] # probability second observer detects when first observer did not
   if(indep)
-    delta.values=1
-  else
   {
-    delta.values=delta(dmat,p1,p2,gamma,PI,use.offset)
+    p21=p20  # they are the same under independence
+  } else
+  {
+    gamma=par[(1+dim(xmat)[2]):length(par)]
+    p21=plogis(log(p20/(1-p20))+dmat%*%gamma)  # probability second observer detects when first observer did
+                                               # this is c in MARK lingo - the recapture probability
   }
-  return(list(p1=p1,p2=p2,delta.values=delta.values,parnames=parnames))
+  return(list(p1=p1,p20=p20,p21=p21,parnames=parnames))
 }
+

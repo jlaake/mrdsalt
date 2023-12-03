@@ -28,7 +28,7 @@ ddf=function (dsmodel = call(), mrmodel = call(), data, method = "ds",
   if (!is.null(data$observer) & !is.null(data$object))
     data <- data[order(data$object, data$observer), ]
   method <- match.arg(method, c("ds", "io", "io.fi", "trial",
-                                "trial.fi", "rem", "rem.fi","loglinear","bpi"))
+                                "trial.fi", "rem", "rem.fi","loglinear","bpi","mr"))
   if (method %in% c("ds", "io", "trial", "rem")) {
     if (missing(dsmodel)) {
       stop("For method=", method, ", dsmodel must be specified")
@@ -59,7 +59,9 @@ ddf=function (dsmodel = call(), mrmodel = call(), data, method = "ds",
                    loglinear=ddf.loglinear(mrmodel = mrmodel, data = data, meta.data = meta.data, control = control,
                                            call = match.call()),
                    bpi=ddf.bpi(mrmodel = mrmodel, data = data, meta.data = meta.data, control = control,
-                                           call = match.call()))
+                                           call = match.call()),
+                   mr=ddf.mr(mrmodel = mrmodel, data = data, meta.data = meta.data, control = control,
+                               call = match.call()))
   options(save.options)
   result$runtime=(proc.time()-ptm)["elapsed"]
   return(result)

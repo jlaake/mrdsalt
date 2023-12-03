@@ -1,4 +1,4 @@
-#' Fits a Buckland et al (2010) model with possible dependence in detection for mark-recapture distance
+#' Fits a mark-recapture type model ala Huggins for mark-recapture distance sampling data
 #' data.
 #' @param data dataframe containing double observer data (2 records per observation) with fields observer, detected, distance and possibly ch (capture history=10,01 or 11 for pair of observations
 #' @param mrmodel list containing pformula (for detection) and dformula (for dependence)
@@ -19,7 +19,7 @@
 #' dd=make.design.data(x)
 #' #fit model
 #' results=ddf(mrmodel=list(pformula=~observer*distance,dformula=~-1+distance),
-#' data=dd,method="bpi",meta.data=list(width=W),
+#' data=dd,method="mr",meta.data=list(width=W),
 #' control=list(method="nlminb",debug=FALSE))
 #' results$criterion
 #' # %diff
@@ -38,7 +38,7 @@
 #'  pformula=~observer*distance,dformula=~-1+distance,PI=TRUE)
 #' #fit model
 #' results=ddf(mrmodel=list(pformula=~observer*distance,dformula=~-1+distance),
-#' data=x,method="bpi",meta.data=list(width=W),
+#' data=x,method="mr",meta.data=list(width=W),
 #' control=list(method="nlminb",debug=FALSE))
 #' results$criterion
 #' # %diff
@@ -50,7 +50,7 @@
 #' par(mfrow=c(1,2))
 #' plot(results,7:8,showlines=FALSE)
 #
-ddf.bpi=function(mrmodel,data,meta.data=meta.data,control=control,call="")
+ddf.mr=function(mrmodel,data,meta.data=meta.data,control=control,call="")
 {
   save.options <- options()
   options(contrasts = c("contr.treatment", "contr.poly"))
@@ -86,12 +86,11 @@ ddf.bpi=function(mrmodel,data,meta.data=meta.data,control=control,call="")
   if(any(data$ch=="00"))cat("00 records")
   data=data[data$ch!="00",]
   # call p.bpi just to to check if length par is ok and to get parnames
-  xx=p.bpi(par,x=data,pformula=pformula,dformula=dformula,indep=control$indep,PI=control$PI,use.offset=control$use.offset,
-           posdep=control$posdep)
+  xx=p.mr(par,x=data,pformula=pformula,dformula=dformula,indep=control$indep)
   # fit model using optimx
-  mod=optimx(par=par,fn=ll.bpi,x=data,width=meta.data$width,method=control$method,
-             pformula=pformula,dformula=dformula,debug=control$debug,indep=control$indep,PI=control$PI,use.offset=control$use.offset,
-             control=control$control,posdep=control$posdep)
+  mod=optimx(par=par,fn=ll.mr,x=data,width=meta.data$width,method=control$method,
+             pformula=pformula,dformula=dformula,debug=control$debug,
+             indep=control$indep)
   if(mod$convcode!=0)cat("\nmodel did not converge")
   # extract parameters from model output
   npar=attributes(mod)$npar
@@ -104,7 +103,7 @@ ddf.bpi=function(mrmodel,data,meta.data=meta.data,control=control,call="")
   result$par=par
   result$lnl=-mod$value
   result$criterion=2*mod$value+2*length(par)
-  class(result) <- c("bpi", "ddf")
+  class(result) <- c("mr", "ddf")
   # compute average p and Nhat
   fitted=predict(result)
   result$Nhat=sum(1/fitted)
