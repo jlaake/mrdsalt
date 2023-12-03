@@ -2,7 +2,7 @@
 % Please edit documentation in R/p.mr.r
 \name{p.mr}
 \alias{p.mr}
-\title{Probability calculations for Buckland et al 2010 model}
+\title{Probability calculations for mark-recapture type Huggins model}
 \usage{
 p.mr(par, x, pformula, dformula, indep)
 }

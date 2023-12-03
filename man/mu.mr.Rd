@@ -2,7 +2,7 @@
 % Please edit documentation in R/mu.mr.R
 \name{mu.mr}
 \alias{mu.mr}
-\title{Computes probability of detection by at least one observer for fitted bpi model at a range of distances to
+\title{Computes probability of detection by at least one observer for fitted mr model at a range of distances to
 integrate pooled detection function}
 \usage{
 mu.mr(x, dd, models, par, indep)
@@ -24,6 +24,6 @@ mu.mr(x, dd, models, par, indep)
 vector of values of probability of detection by at least one observer for fitted bpi model at a set of distance
 }
 \description{
-Computes probability of detection by at least one observer for fitted bpi model at a range of distances to
+Computes probability of detection by at least one observer for fitted mr model at a range of distances to
 integrate pooled detection function
 }
