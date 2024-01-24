@@ -35,6 +35,8 @@ integrate_mu.bpi(
 \item{PI}{if TRUE, uses point independence model}
 
 \item{use.offset}{if TRUE use offset value for logit}
+
+\item{posdep}{if TRUE forces positive dependence relationship}
 }
 \value{
 vector of n integral values

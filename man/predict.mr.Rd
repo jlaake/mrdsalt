@@ -2,7 +2,7 @@
 % Please edit documentation in R/predict.mr.R
 \name{predict.mr}
 \alias{predict.mr}
-\title{Compute average detection probabilities for mark-recapture ty with possible dependence in detections for mark-recapture distance data.}
+\title{Compute average detection probabilities for mark-recapture with possible dependence in detections for mark-recapture distance data.}
 \usage{
 \method{predict}{mr}(object, ...)
 }
@@ -15,7 +15,7 @@
 vector of predicted average detection probabilities (integrated over x) for each observation.
 }
 \description{
-Compute average detection probabilities for mark-recapture ty with possible dependence in detections for mark-recapture distance data.
+Compute average detection probabilities for mark-recapture with possible dependence in detections for mark-recapture distance data.
 }
 \seealso{
 \link{integrate_mu.mr}

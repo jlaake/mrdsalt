@@ -4,8 +4,7 @@
 #' @param x vector of distance values
 #' @param dd a single pair of detection records for the integration; the pair is replicated length(x) times to compute probability at each x for the integration
 #' @param models model list of p and delta formulas for detection probabilities
-#' @param beta parameters for p
-#' @param gamma parameters for delta dependence function
+#' @param par parameters for p
 #' @param indep if TRUE, uses full independence model
 #' @param PI if TRUE, uses point independence model
 #' @param use.offset if TRUE use offset value for logit

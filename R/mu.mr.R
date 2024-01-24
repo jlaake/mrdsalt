@@ -4,8 +4,7 @@
 #' @param x vector of distance values
 #' @param dd a single pair of detection records for the integration; the pair is replicated length(x) times to compute probability at each x for the integration
 #' @param models model list of p and delta formulas for detection probabilities
-#' @param beta parameters for p
-#' @param gamma parameters for delta dependence function
+#' @param par parameters
 #' @param indep if TRUE, uses full independence model
 #' @export
 #' @return vector of values of probability of detection by at least one observer for fitted bpi model at a set of distance

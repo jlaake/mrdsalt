@@ -4,18 +4,7 @@
 \alias{integrate_mu.mr}
 \title{Integral of probability of detection by at least one observer for fitted mr model}
 \usage{
-integrate_mu.mr(
-  x,
-  n,
-  pformula,
-  dformula,
-  par,
-  width,
-  indep,
-  PI,
-  use.offset,
-  posdep
-)
+integrate_mu.mr(x, n, pformula, dformula, par, width, indep)
 }
 \arguments{
 \item{x}{observation dataframe}

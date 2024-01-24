@@ -12,6 +12,7 @@
 #' @param indep if TRUE, uses full independence model
 #' @param PI if TRUE, uses point independence model
 #' @param use.offset if TRUE use offset value for logit
+#' @param posdep if TRUE forces positive dependence relationship
 #' @return vector of n integral values
 #' @author Jeff Laake
 #' @export

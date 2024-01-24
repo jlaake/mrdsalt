@@ -14,11 +14,9 @@ mu.mr(x, dd, models, par, indep)
 
 \item{models}{model list of p and delta formulas for detection probabilities}
 
+\item{par}{parameters}
+
 \item{indep}{if TRUE, uses full independence model}
-
-\item{beta}{parameters for p}
-
-\item{gamma}{parameters for delta dependence function}
 }
 \value{
 vector of values of probability of detection by at least one observer for fitted bpi model at a set of distance

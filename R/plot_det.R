@@ -518,7 +518,7 @@ average.line.mr<-function (finebr, obs, model)
     x <- (finebr[i] + finebr[i + 1])/2
     xgrid <- c(xgrid, x)
     newdat$distance <- rep(x, dim(newdat)[1])
-    plist=p.mr(par=model$par,newdat,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula,
+    p.list=p.mr(par=model$par,newdat,pformula=model$mrmodel$pformula,dformula=model$mrmodel$dformula,
                 indep=model$control$indep)
     p1=p.list$p1
     p20=p.list$p20

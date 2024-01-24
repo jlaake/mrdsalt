@@ -16,8 +16,6 @@ integrate_mu.loglinear(x, pformula, dformula, par, width)
 \item{par}{parameters for model}
 
 \item{width}{transect half-width}
-
-\item{n}{number of integrals to compute}
 }
 \value{
 vector of n integral values

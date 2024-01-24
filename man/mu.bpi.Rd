@@ -14,6 +14,8 @@ mu.bpi(x, dd, models, par, indep, PI, use.offset, posdep)
 
 \item{models}{model list of p and delta formulas for detection probabilities}
 
+\item{par}{parameters for p}
+
 \item{indep}{if TRUE, uses full independence model}
 
 \item{PI}{if TRUE, uses point independence model}
@@ -21,10 +23,6 @@ mu.bpi(x, dd, models, par, indep, PI, use.offset, posdep)
 \item{use.offset}{if TRUE use offset value for logit}
 
 \item{posdep}{if TRUE enforces positive dependence in delta}
-
-\item{beta}{parameters for p}
-
-\item{gamma}{parameters for delta dependence function}
 }
 \value{
 vector of values of probability of detection by at least one observer for fitted bpi model at a set of distance

@@ -1,4 +1,4 @@
-#' Compute average detection probabilities for mark-recapture ty with possible dependence in detections for mark-recapture distance data.
+#' Compute average detection probabilities for mark-recapture with possible dependence in detections for mark-recapture distance data.
 #'
 #' @param object fitted mr model
 #' @param ...	additional arguments affecting the predictions produced

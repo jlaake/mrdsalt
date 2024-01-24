@@ -14,7 +14,7 @@
 #' @author Jeff Laake
 #' @export
 # compute integral over pooled detection function
-integrate_mu.mr=function(x,n,pformula,dformula,par,width,indep,PI,use.offset,posdep)
+integrate_mu.mr=function(x,n,pformula,dformula,par,width,indep)
 {
   # compute integral of detection function over distance x; loop over covariate values
   integrals=vector(mode="numeric",length=n)

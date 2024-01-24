@@ -85,7 +85,7 @@ ddf.mr=function(mrmodel,data,meta.data=meta.data,control=control,call="")
   # if ch is 00 remove record
   if(any(data$ch=="00"))cat("00 records")
   data=data[data$ch!="00",]
-  # call p.bpi just to to check if length par is ok and to get parnames
+  # call p.mr just to to check if length par is ok and to get parnames
   xx=p.mr(par,x=data,pformula=pformula,dformula=dformula,indep=control$indep)
   # fit model using optimx
   mod=optimx(par=par,fn=ll.mr,x=data,width=meta.data$width,method=control$method,

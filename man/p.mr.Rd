@@ -16,12 +16,6 @@ p.mr(par, x, pformula, dformula, indep)
 \item{dformula}{formula for delta dependence function}
 
 \item{indep}{if TRUE, uses full independence model}
-
-\item{PI}{if TRUE, uses point independence model}
-
-\item{use.offset}{if TRUE use offset value for logit}
-
-\item{posdep}{if TRUE enforces positive dependence in delta}
 }
 \value{
 list of vectors for p1,p2, integrals and delta values

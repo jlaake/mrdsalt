@@ -4,7 +4,6 @@
 #' each observation to integrate average detection probability by at least one observer.
 #'
 #' @param x observation dataframe
-#' @param n number of integrals to compute
 #' @param pformula formula for detection probabilities
 #' @param dformula formula for delta dependence function
 #' @param par parameters for model

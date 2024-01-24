@@ -1,11 +1,11 @@
-#' Simulates some mark-recapture distance data using a a specified detection model.
+#' Simulates some mark-recapture distance data using aspecified detection model.
 #'
 #' Dependence can be induced with a covariate that is not used in the fitted detection model.
 #'
-#' @param x population data - 1 row per observer and must contain distance and observer and object fields at a minimum
-#' @param detfct a function specifying detection proability; uses distance, scale and optionally ...
+#' @param x population data with 1 row per observer and must contain distance and observer and object fields at a minimum
+#' @param detfct a function specifying detection proability; uses distance, scale and optionally covariate cov
 #' @param W half-width of the transect; observations are out to distance W.
-#' @param p0 probability of detection on the line for the 2 observers
+#' @param p0 probability of detection on the line for the 2 observers; no covariates are used
 #' @param scale.formula parameter values
 #' @param par scale parameter values on log scale
 #' @param ... additional parameters passed to detfct
@@ -16,13 +16,18 @@
 #' W=10
 #' par=c(1,1,1)
 #' p0=c(.9,.9)
-#' x=data.frame(observer=factor(rep(c(1,2),times=N)),object=rep(1:N,each=2), distance=rep(runif(N,0,W),each=2),cov=rep(rnorm(N,0,.5),each=2))
-#' dd=sim.general(x,halfnormal,W=10,par=par,p0=p0,scale.formula=~-1+observer+cov)
+#' x=data.frame(observer=factor(rep(c(1,2),times=N)),object=rep(1:N,each=2),
+#'   distance=rep(runif(N,0,W),each=2),cov=rep(rnorm(N,0,.5),each=2))
+#' dd=sim.general(x,halfnormal,W=10,par=par,p0=p0,
+#'                scale.formula=~-1+observer+cov)
 #' par(mfrow=c(2,1))
-#' hist(dd$distance[dd$observer==1&dd$ch%in%c("11","10")],main="Observer 1",xlab="Distance")
-#' hist(dd$distance[dd$observer==2&dd$ch%in%c("11","01")],main="Observer 2",xlab="Distance")
+#' hist(dd$distance[dd$observer==1&dd$ch%in%c("11","10")],
+#'   main="Observer 1",xlab="Distance")
+#' hist(dd$distance[dd$observer==2&dd$ch%in%c("11","01")],
+#'   main="Observer 2",xlab="Distance")
 #' #Fit loglinear model to data
-#' results=ddf(data=dd,meta.data=list(width=W),method="loglinear",mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~-1+distance))
+#' results=ddf(data=dd,meta.data=list(width=W),method="loglinear",
+#' mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~-1+distance))
 #' results$criterion
 #' # %diff
 #' 100*(results$Nhat-N)/N
@@ -33,7 +38,9 @@
 #' par(mfrow=c(1,2))
 #' plot(results,7:8,showlines=FALSE)
 #' #Fit PI bpi model to data
-#' results=ddf(data=dd,meta.data=list(width=W),method="bpi",control=list(indep=FALSE,PI=TRUE),mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~-1+distance))
+#' results=ddf(data=dd,meta.data=list(width=W),method="bpi",
+#'  control=list(indep=FALSE,PI=TRUE),
+#'  mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~-1+distance))
 #' results$criterion
 #' # %diff
 #' 100*(results$Nhat-N)/N
@@ -44,7 +51,9 @@
 #' par(mfrow=c(1,2))
 #' plot(results,7:8,showlines=FALSE)
 #' #Fit full independence bpi model to data
-#' results=ddf(data=dd,meta.data=list(width=W),control=list(indep=TRUE,PI=FALSE),method="bpi",mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~0))
+#' results=ddf(data=dd,meta.data=list(width=W),
+#'   control=list(indep=TRUE,PI=FALSE),method="bpi",
+#'   mrmodel=list(pformula=~-1+observer+observer:distance,dformula=~0))
 #' results$criterion
 #' # %diff
 #' 100*(results$Nhat-N)/N

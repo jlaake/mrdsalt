@@ -8,9 +8,6 @@
 #' @param pformula formula for detection probabilities
 #' @param dformula formula for delta dependence function
 #' @param indep if TRUE, uses full independence model
-#' @param PI if TRUE, uses point independence model
-#' @param use.offset if TRUE use offset value for logit
-#' @param posdep if TRUE enforces positive dependence in delta
 #' @export
 #' @return list of vectors for p1,p2, integrals and delta values
 p.mr=function(par,x,pformula,dformula,indep)

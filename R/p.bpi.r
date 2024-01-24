@@ -12,15 +12,19 @@
 #' @param use.offset if TRUE use offset value for logit
 #' @param posdep if TRUE enforces positive dependence in delta
 #' @export
+#' @importFrom "stats" "plogis"
 #' @return list of vectors for p1,p2, integrals and delta values
 p.bpi=function(par,x,pformula,dformula,indep,PI,use.offset,posdep)
 {
   # create design matrix for p and delta
   xmat=model.matrix(pformula,x)
   dmat=model.matrix(dformula,x[x$observer==1,])
-  parnames=c(paste("p:",colnames(xmat)),paste("delta:",colnames(dmat)))
   if(!indep)
+  {
+    parnames=c(paste("p:",colnames(xmat)),paste("delta:",colnames(dmat)))
     if(PI & colnames(dmat)[1]=="(Intercept)") stop("\nError: No intercept allowed with PI model\n")
+  } else
+    parnames=c(paste("p:",colnames(xmat)))
   # extract parameter vectors: beta for detection and gamma for delta
   beta=par[1:dim(xmat)[2]]
   if(posdep)
